@@ -1,4 +1,5 @@
 import gspread
+import time
 from google.oauth2.service_account import Credentials
 
 SCOPE = [
@@ -23,6 +24,9 @@ class Customer:
 
     def info(self):
         return f'Client: {self.f_name} {self.l_name}. Email: {self.email}'
+
+    def full_name(self):
+        return f'{self.f_name} {self.l_name}'
 
 
 def is_registred():
@@ -57,15 +61,26 @@ def validate_is_registred(data):
 
 def need_to_be_register(value):
     """
-    Based on the previous answear, check if the client need to be register
+    Check if the user is really registered.
+    If not, register a new client.
     """
-    if value == "y":
+    customer_data = []
+
+    if value.lower() == "y":
+        print("Good to have you back!")
+        print("I just need to check your email.")
         email = check_email()
         row = find_row(email)
-        customer = create_customer(row)
-        print(customer.info())
-    elif value == "n":
-        pass
+        customer_data = get_customer_data(row)
+
+    elif value.lower() == "n":
+        print("First time here!")
+        print("Let's make a register for you")
+        print("I just need a few information")
+        customer_data = collect_new_customer_data()
+        update_worksheet(customer_data, "clients")
+
+    return customer_data
 
 
 def check_email():
@@ -76,16 +91,15 @@ def check_email():
     email_collum = client_sheet.col_values(3)
 
     while True:
-        print("What is you email?")
+        print("Can you write it for me?")
         email = input("Enter your answear here:\n")
 
         if validate_email(email):
             if email in email_collum:
-                print("Valid email")
                 break
             else:
-                print("Email not found.")
-                print("Try again.\n")
+                print("Sorry, I can't find your email.")
+                print("Can we try again?\n")
 
     return email
 
@@ -115,18 +129,81 @@ def find_row(email):
     return cell.row
 
 
-def create_customer(row):
+def get_customer_data(row):
+    """
+    From the worksheet data, generate a client
+    """
     client_sheet = SHEET.worksheet("clients")
     customer_data = client_sheet.row_values(row)
 
-    return Customer(customer_data[0], customer_data[1], customer_data[2])
+    return [customer_data[0], customer_data[1], customer_data[2]]
+
+
+def collect_new_customer_data():
+    """
+    Colect user data and check if its not already registered
+    """
+    client_sheet = SHEET.worksheet("clients")
+    email_collum = client_sheet.col_values(3)
+
+    f_name = input("What's your first name?\n")
+    l_name = input("What's your last name?\n")
+
+    while True:
+        email = input("What's your email?\n")
+
+        if email not in email_collum:
+            if validate_email(email):
+                break
+        else:
+            print("Sorry, this email is already in use")
+            print("Can we try again?\n")
+
+    return [f_name, l_name, email]
+
+
+def update_worksheet(data, worksheet):
+    """
+    Receives a list of integers to be inserted into a worksheet
+    Update the relevant worksheet with the data provided
+    """
+    print(f"Updating {worksheet} worksheet...\n")
+    worksheet_to_update = SHEET.worksheet(worksheet)
+    worksheet_to_update.append_row(data)
+    print(f"{worksheet} worksheet updated successfully\n")
+
+
+def create_customer(data):
+    """
+    Create the customer
+    """
+    return Customer(data[0], data[1], data[2])
+
+
+def menu_options():
+    """
+    Present the menus and return user otpion
+    """
+    print("A - Foods menu")
+    print("B - Drinks menu")
+    print("C - Deserts menu")
+    menu_option = input("Enter your answear here:\n").upper()
+
+    while menu_option not in ("A", "B", "C"):
+        print("Please choose between one of the options")
+        menu_option = input("Enter your answear here:\n").upper()
+
+    return menu_option
 
 
 def main():
     print("Welcome to the Coders Bistro\n")
 
     is_registred_answear = is_registred()
-    need_to_be_register(is_registred_answear)
+    customer_data = need_to_be_register(is_registred_answear)
+    customer = create_customer(customer_data)
 
+    print("All done. Wich menu do you want to check first?\n")
+    menu_otpion = menu_options()
 
 main()
