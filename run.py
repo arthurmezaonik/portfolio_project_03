@@ -22,7 +22,7 @@ class Customer:
         self.email = email
 
     def info(self):
-        return f'Thaks for visiting us {self.f_name} {self.l_name}. Your order was sent on {self.email}'
+        return f'Client: {self.f_name} {self.l_name}. Email: {self.email}'
 
 
 def is_registred():
@@ -46,7 +46,7 @@ def validate_is_registred(data):
     try:
         answear = data.strip().lower()
         if answear not in ("y", "n"):
-            raise ValueError('Please choose between Y or N')
+            raise ValueError('Choose between Y or N')
 
     except ValueError as e:
         print(f"Invalid data: {e}, please try again.\n")
@@ -60,7 +60,10 @@ def need_to_be_register(value):
     Based on the previous answear, check if the client need to be register
     """
     if value == "y":
-        check_email()
+        email = check_email()
+        row = find_row(email)
+        customer = create_customer(row)
+        print(customer.info())
     elif value == "n":
         pass
 
@@ -84,6 +87,8 @@ def check_email():
                 print("Email not found.")
                 print("Try again.\n")
 
+    return email
+
 
 def validate_email(email_to_validate):
     """
@@ -98,6 +103,23 @@ def validate_email(email_to_validate):
         return False
 
     return True
+
+
+def find_row(email):
+    """
+    From the email, find user on the worksheet
+    """
+    client_sheet = SHEET.worksheet("clients")
+    cell = client_sheet.find(email)
+
+    return cell.row
+
+
+def create_customer(row):
+    client_sheet = SHEET.worksheet("clients")
+    customer_data = client_sheet.row_values(row)
+
+    return Customer(customer_data[0], customer_data[1], customer_data[2])
 
 
 def main():
