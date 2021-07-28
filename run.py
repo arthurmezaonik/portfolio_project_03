@@ -34,7 +34,6 @@ def is_registred():
         first_answear = input("Enter your answear here:\n")
 
         if validate_is_registred(first_answear):
-            print("Valid answear")
             break
 
     return first_answear
@@ -54,3 +53,58 @@ def validate_is_registred(data):
         return False
 
     return True
+
+
+def need_to_be_register(value):
+    """
+    Based on the previous answear, check if the client need to be register
+    """
+    if value == "y":
+        check_email()
+    elif value == "n":
+        pass
+
+
+def check_email():
+    """
+    Check if the email is already registered
+    """
+    client_sheet = SHEET.worksheet("clients")
+    email_collum = client_sheet.col_values(3)
+
+    while True:
+        print("What is you email?")
+        email = input("Enter your answear here:\n")
+
+        if validate_email(email):
+            if email in email_collum:
+                print("Valid email")
+                break
+            else:
+                print("Email not found.")
+                print("Try again.\n")
+
+
+def validate_email(email_to_validate):
+    """
+    Validate email address
+    """
+    try:
+        if "@" not in email_to_validate:
+            raise ValueError("Please enter a valid email")
+    except ValueError as e:
+        print(f"Invalid data: {e}")
+        print("Example: code@codersbistro.com\n")
+        return False
+
+    return True
+
+
+def main():
+    print("Welcome to the Coders Bistro\n")
+
+    is_registred_answear = is_registred()
+    need_to_be_register(is_registred_answear)
+
+
+main()
