@@ -1,5 +1,4 @@
 import gspread
-import time
 from google.oauth2.service_account import Credentials
 
 SCOPE = [
@@ -196,6 +195,22 @@ def menu_options():
     return menu_option
 
 
+def display_menu(menu_option):
+    """
+    Print the menu on the screen
+    """
+    option = menu_option.upper()
+    if option == "A":
+        menu_sheet = SHEET.worksheet("food_menu").get_all_values()
+    elif option == "B":
+        menu_sheet = SHEET.worksheet("drink_menu").get_all_values()
+    elif option == "C":
+        menu_sheet = SHEET.worksheet("deserts_menu").get_all_values()
+
+    for item in menu_sheet:
+        print(f'{item[0]:_<15}{item[1]:_>15}')
+
+
 def main():
     print("Welcome to the Coders Bistro\n")
 
@@ -204,6 +219,8 @@ def main():
     customer = create_customer(customer_data)
 
     print("All done. Wich menu do you want to check first?\n")
-    menu_otpion = menu_options()
+    menu_option = menu_options()
+    print(display_menu(menu_option))
+
 
 main()
