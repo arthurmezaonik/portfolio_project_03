@@ -37,13 +37,13 @@ def is_registred():
         print("Are you registered (Y / N)?")
         first_answear = input("Enter your answear here:\n")
 
-        if validate_is_registred(first_answear):
+        if validate_yes_no(first_answear):
             break
 
     return first_answear
 
 
-def validate_is_registred(data):
+def validate_yes_no(data):
     """
     Validate the answear for the is_registered question
     """
@@ -188,6 +188,7 @@ def menu_options():
     """
     Present the menus and return user otpion
     """
+    print("Wich menu do you want to check?")
     print("A - Foods menu")
     print("B - Drinks menu")
     print("C - Deserts menu")
@@ -230,8 +231,7 @@ def validate_customer_order(id, worksheet):
     """
     Validate the ID passed from the user
     """
-    ids = worksheet.col_values(1)    
-
+    ids = worksheet.col_values(1)
     try:
         if id not in ids:
             raise ValueError("Choose between one of the printed Ids")
@@ -268,7 +268,37 @@ def add_balance(customer, value):
     """
     Add value on the customer balance
     """
-    customer.balance.append(value)
+    customer.balance.append(float(value))
+
+
+def ordering():
+    """
+    Check if the user wants to keep ordering
+    """
+    while True:
+        print(message())
+        answear = input("Enter your answear here:\n")
+
+        if validate_yes_no(answear):
+            break
+
+    if answear.upper() == "Y":
+        return True
+    elif answear.upper() == "N":
+        return False
+
+
+def message():
+    """
+    Change the message from the ordering function
+    """
+    x = 0
+
+    if x == 0:
+        x += 1
+        return "Can I bring the menu (Y / N)?"
+    else:
+        return "Do you want something more?"
 
 
 def main():
@@ -277,14 +307,16 @@ def main():
     is_registred_answear = is_registred()
     customer_data = need_to_be_register(is_registred_answear)
     customer = create_customer(customer_data)
+    print("All done!\n")
 
-    print("All done. Wich menu do you want to check first?\n")
-    menu_option = menu_options()
-    worksheet = select_worksheet(menu_option)
+    while ordering():
+        menu_option = menu_options()
+        worksheet = select_worksheet(menu_option)
+        display_menu(worksheet)
+        id = customer_order(worksheet)
+        value = get_value(id, worksheet)
+        add_balance(customer, value)
+        print(customer.info())
 
-    display_menu(worksheet)    
-    id = customer_order(worksheet)
-
-    value = get_value(id, worksheet)
 
 main()
