@@ -70,7 +70,9 @@ def need_to_be_register(value):
         print("Good to have you back!")
         print("I just need to check your email.")
         email = check_email()
-        row = find_row(email)
+        # Passed a 'random' str on the function to return clients list
+        worksheet = select_worksheet("random")
+        row = find_row(email, worksheet)
         customer_data = get_customer_data(row)
 
     elif value.lower() == "n":
@@ -119,12 +121,12 @@ def validate_email(email_to_validate):
     return True
 
 
-def find_row(email):
+def find_row(item, sheet):
     """
     From the email, find user on the worksheet
     """
-    client_sheet = SHEET.worksheet("clients")
-    cell = client_sheet.find(email)
+    client_sheet = sheet
+    cell = client_sheet.find(item)
 
     return cell.row
 
@@ -133,7 +135,9 @@ def get_customer_data(row):
     """
     From the worksheet data, generate a client
     """
-    client_sheet = SHEET.worksheet("clients")
+
+    # Passed a 'random' str on the function to return clients list
+    client_sheet = select_worksheet("random")
     customer_data = client_sheet.row_values(row)
 
     return [customer_data[0], customer_data[1], customer_data[2]]
@@ -196,23 +200,17 @@ def menu_options():
     return menu_option
 
 
-def display_menu(menu_option):
+def display_menu(sheet):
     """
     Print the menu on the screen
     """
-    option = menu_option.upper()
-    if option == "A":
-        menu_sheet = SHEET.worksheet("food_menu").get_all_values()
-    elif option == "B":
-        menu_sheet = SHEET.worksheet("drink_menu").get_all_values()
-    elif option == "C":
-        menu_sheet = SHEET.worksheet("deserts_menu").get_all_values()
+    menu_sheet = sheet.get_all_values()
 
     for item in menu_sheet:
         print(f'{item[0]:<5}{item[1]:_<15}{item[2]:_>15}')
 
 
-def customer_order(sheet):
+def customer_order(worksheet):
     """
     Collect the user order
     """
@@ -221,25 +219,18 @@ def customer_order(sheet):
         print("What's the ID from the item that you want?")
         id = input("Enter your answear here:\n")
 
-        if validate_customer_order(id, sheet):
+        if validate_customer_order(id, worksheet):
             print("Noted!")
             break
 
     return id
 
 
-def validate_customer_order(id, option):
+def validate_customer_order(id, worksheet):
     """
     Validate the ID passed from the user
     """
-    ids = ""
-
-    if option.upper() == "A":
-        ids = SHEET.worksheet("food_menu").col_values(1)
-    elif option.upper() == "B":
-        ids = SHEET.worksheet("drink_menu").col_values(1)
-    elif option.upper() == "C":
-        ids = SHEET.worksheet("deserts_menu").col_values(1)
+    ids = worksheet.col_values(1)    
 
     try:
         if id not in ids:
@@ -249,6 +240,28 @@ def validate_customer_order(id, option):
         return False
 
     return True
+
+
+def select_worksheet(option):
+    worksheet = ""
+
+    if option.upper() == "A":
+        worksheet = SHEET.worksheet("food_menu")
+    elif option.upper() == "B":
+        worksheet = SHEET.worksheet("drink_menu")
+    elif option.upper() == "C":
+        worksheet = SHEET.worksheet("deserts_menu")
+    else:
+        worksheet = SHEET.worksheet("clients")
+
+    return worksheet
+
+
+def get_value(id, sheet):
+    row = find_row(id, sheet)
+    item_row = sheet.row_values(row)
+
+    return item_row[2]
 
 
 def add_balance(customer, value):
@@ -267,9 +280,11 @@ def main():
 
     print("All done. Wich menu do you want to check first?\n")
     menu_option = menu_options()
-    display_menu(menu_option)
+    worksheet = select_worksheet(menu_option)
 
-    customer_order(menu_option)
+    display_menu(worksheet)    
+    id = customer_order(worksheet)
 
+    value = get_value(id, worksheet)
 
 main()
