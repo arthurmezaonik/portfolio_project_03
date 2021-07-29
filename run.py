@@ -23,7 +23,7 @@ class Customer:
         self.balance = []
 
     def info(self):
-        return f'Client: {self.f_name} {self.l_name}. Email: {self.email}. Balance: {self.balance}'
+        return f'Client: {self.f_name} {self.l_name}.Email: {self.email}.Balance: {self.balance}'
 
     def full_name(self):
         return f'{self.f_name} {self.l_name}'
@@ -209,10 +209,52 @@ def display_menu(menu_option):
         menu_sheet = SHEET.worksheet("deserts_menu").get_all_values()
 
     for item in menu_sheet:
-        print(f'{item[0]:_<15}{item[1]:_>15}')
+        print(f'{item[0]:<5}{item[1]:_<15}{item[2]:_>15}')
+
+
+def customer_order(sheet):
+    """
+    Collect the user order
+    """
+    print("Can I get your order?")
+    while True:
+        print("What's the ID from the item that you want?")
+        id = input("Enter your answear here:\n")
+
+        if validate_customer_order(id, sheet):
+            print("Noted!")
+            break
+
+    return id
+
+
+def validate_customer_order(id, option):
+    """
+    Validate the ID passed from the user
+    """
+    ids = ""
+
+    if option.upper() == "A":
+        ids = SHEET.worksheet("food_menu").col_values(1)
+    elif option.upper() == "B":
+        ids = SHEET.worksheet("drink_menu").col_values(1)
+    elif option.upper() == "C":
+        ids = SHEET.worksheet("deserts_menu").col_values(1)
+
+    try:
+        if id not in ids:
+            raise ValueError("Choose between one of the printed Ids")
+    except ValueError as e:
+        print(f"Invalid option: {e}, please try again.\n")
+        return False
+
+    return True
 
 
 def add_balance(customer, value):
+    """
+    Add value on the customer balance
+    """
     customer.balance.append(value)
 
 
@@ -227,11 +269,7 @@ def main():
     menu_option = menu_options()
     display_menu(menu_option)
 
-    add_balance(customer, 50)
-    add_balance(customer, 150)
-    add_balance(customer, 20)
-    add_balance(customer, 7)
-    print(customer.info())
+    customer_order(menu_option)
 
 
 main()
