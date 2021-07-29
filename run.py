@@ -20,9 +20,10 @@ class Customer:
         self.f_name = f_name
         self.l_name = l_name
         self.email = email
+        self.balance = []
 
     def info(self):
-        return f'Client: {self.f_name} {self.l_name}. Email: {self.email}'
+        return f'Client: {self.f_name} {self.l_name}. Email: {self.email}. Balance: {self.balance}'
 
     def full_name(self):
         return f'{self.f_name} {self.l_name}'
@@ -211,6 +212,10 @@ def display_menu(menu_option):
         print(f'{item[0]:_<15}{item[1]:_>15}')
 
 
+def add_balance(customer, value):
+    customer.balance.append(value)
+
+
 def main():
     print("Welcome to the Coders Bistro\n")
 
@@ -220,7 +225,13 @@ def main():
 
     print("All done. Wich menu do you want to check first?\n")
     menu_option = menu_options()
-    print(display_menu(menu_option))
+    display_menu(menu_option)
+
+    add_balance(customer, 50)
+    add_balance(customer, 150)
+    add_balance(customer, 20)
+    add_balance(customer, 7)
+    print(customer.info())
 
 
 main()
