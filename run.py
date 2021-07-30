@@ -37,7 +37,9 @@ def is_registred():
     while True:
         print("Are you registered (Y / N)?")
         first_answear = input("Enter your answear here:\n")
-
+        print(" ")
+        print("# "*15)
+        print(" ")
         if validate_yes_no(first_answear):
             break
 
@@ -96,6 +98,9 @@ def check_email():
     while True:
         print("Can you write it for me?")
         email = input("Enter your answear here:\n")
+        print(" ")
+        print("# "*15)
+        print(" ")
 
         if validate_email(email):
             if email in email_collum:
@@ -163,6 +168,10 @@ def collect_new_customer_data():
         else:
             print("Sorry, this email is already in use")
             print("Can we try again?\n")
+
+    print(" ")
+    print("# "*15)
+    print(" ")
 
     return [f_name, l_name, email]
 
@@ -290,11 +299,13 @@ def ordering():
 def total(customer):
     order = customer.balance
     total = 0
+    today = date.today().strftime("%d-%m-%Y")
 
     for value in order:
         total += value
+        total = round(total, 2)
 
-    return total
+    return [today, total]
 
 
 def main():
@@ -303,7 +314,8 @@ def main():
     is_registred_answear = is_registred()
     customer_data = need_to_be_register(is_registred_answear)
     customer = create_customer(customer_data)
-    print("All done!\n")
+    print("All done!")
+    print(f'Welcome {customer.full_name()}')
 
     print("Would you like to check our menu? (Y / N)")
     while ordering():
@@ -313,10 +325,14 @@ def main():
         id = customer_order(worksheet)
         value = get_value(id, worksheet)
         add_balance(customer, value)
-        print(customer.info())
         print("Anything else? (Y / N)")
 
-    print(total(customer))
+    order = total(customer)
+    update_worksheet(order, "sales")
+
+    print("Thanks for eating with us!")
+    print(f"The total of your order is ${order[1]}.")
+    print(f'A copy of your order was send for {customer.email}')
 
 
 main()
