@@ -1,5 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
+from datetime import date
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -215,7 +216,6 @@ def customer_order(worksheet):
     """
     Collect the user order
     """
-    print("Can I get your order?")
     while True:
         print("What's the ID from the item that you want?")
         id = input("Enter your answear here:\n")
@@ -276,7 +276,6 @@ def ordering():
     Check if the user wants to keep ordering
     """
     while True:
-        print(message())
         answear = input("Enter your answear here:\n")
 
         if validate_yes_no(answear):
@@ -288,17 +287,14 @@ def ordering():
         return False
 
 
-def message():
-    """
-    Change the message from the ordering function
-    """
-    x = 0
+def total(customer):
+    order = customer.balance
+    total = 0
 
-    if x == 0:
-        x += 1
-        return "Can I bring the menu (Y / N)?"
-    else:
-        return "Do you want something more?"
+    for value in order:
+        total += value
+
+    return total
 
 
 def main():
@@ -309,6 +305,7 @@ def main():
     customer = create_customer(customer_data)
     print("All done!\n")
 
+    print("Would you like to check our menu? (Y / N)")
     while ordering():
         menu_option = menu_options()
         worksheet = select_worksheet(menu_option)
@@ -317,6 +314,9 @@ def main():
         value = get_value(id, worksheet)
         add_balance(customer, value)
         print(customer.info())
+        print("Anything else? (Y / N)")
+
+    print(total(customer))
 
 
 main()
