@@ -185,6 +185,9 @@ def update_worksheet(data, worksheet):
     worksheet_to_update = SHEET.worksheet(worksheet)
     worksheet_to_update.append_row(data)
     print(f"{worksheet} worksheet updated successfully\n")
+    print(" ")
+    print("# "*15)
+    print(" ")
 
 
 def create_customer(data):
@@ -203,6 +206,9 @@ def menu_options():
     print("B - Drinks menu")
     print("C - Deserts menu")
     menu_option = input("Enter your answear here:\n").upper()
+    print(" ")
+    print("# "*15)
+    print(" ")
 
     while menu_option not in ("A", "B", "C"):
         print("Please choose between one of the options")
@@ -218,7 +224,7 @@ def display_menu(sheet):
     menu_sheet = sheet.get_all_values()
 
     for item in menu_sheet:
-        print(f'{item[0]:<5}{item[1]:_<15}{item[2]:_>15}')
+        print(f'{item[0]:<5}{item[1]:_<20}{item[2]:_>20}')
 
 
 def customer_order(worksheet):
@@ -228,6 +234,9 @@ def customer_order(worksheet):
     while True:
         print("What's the ID from the item that you want?")
         id = input("Enter your answear here:\n")
+        print(" ")
+        print("# "*15)
+        print(" ")
 
         if validate_customer_order(id, worksheet):
             print("Noted!")
@@ -286,6 +295,9 @@ def ordering():
     """
     while True:
         answear = input("Enter your answear here:\n")
+        print(" ")
+        print("# "*15)
+        print(" ")
 
         if validate_yes_no(answear):
             break
