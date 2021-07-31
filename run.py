@@ -43,6 +43,9 @@ class Admin:
         return f'Email: {self.email} Password: {self.password}'
 
     def check_sales(self, date):
+        """
+        Check the sum of the sales for the chosen day
+        """
         worksheet = select_worksheet("sales")
         day_col = worksheet.col_values(1)
         sales = worksheet.get_all_values()
@@ -59,9 +62,23 @@ class Admin:
                     num = num_sheet.replace(",", ".")
                     total += float(num)
 
-            print(f"The total sales on {date} is ${total}")
+            print(f"The sales' total on {date} is ${total}")
 
             return True
+
+    def new_expanse(self):
+        """
+        Register a new expanse on the worksheet
+        """
+        today = date.today().strftime("%d-%m-%Y")
+        print("How much is the expnase?")
+        print("Example: 15.50")
+        value = float(input("Enter your answear here:\n"))
+        print("Give a small description for your expanse")
+        description = input("Enter your answear here:\n")
+
+        data = [today, value, description]
+        update_worksheet(data, "expenses")
 
 
 def is_registred():
@@ -218,7 +235,7 @@ def update_worksheet(data, worksheet):
     print(f"Updating {worksheet} worksheet...\n")
     worksheet_to_update = SHEET.worksheet(worksheet)
     worksheet_to_update.append_row(data)
-    print(f"{worksheet} worksheet updated successfully\n")
+    print(f"{worksheet} worksheet updated successfully")
     print(" ")
     print("# "*15)
     print(" ")
@@ -307,6 +324,8 @@ def select_worksheet(option):
         worksheet = SHEET.worksheet("admin")
     elif option.upper() == "SALES":
         worksheet = SHEET.worksheet("sales")
+    elif option.upper() == "EXPANSES":
+        worksheet = SHEET.worksheet("expanses")
     else:
         worksheet = SHEET.worksheet("clients")
 
@@ -492,6 +511,17 @@ def adm_functions(adm, option):
             total_sales = adm.check_sales(date)
 
             if total_sales:
+                break
+    elif option == "B":
+        adm.new_expanse()
+    elif option == 'C':
+        while True:
+            print("Wich day do you want to check?")
+            print("Ex: 30-07-2021")
+            date = input("Enter your answear here:\n")
+            total_expenses = adm.check_expenses(date)
+
+            if total_expenses:
                 break
 
 
