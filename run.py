@@ -42,6 +42,27 @@ class Admin:
     def info(self):
         return f'Email: {self.email} Password: {self.password}'
 
+    def check_sales(self, date):
+        worksheet = select_worksheet("sales")
+        day_col = worksheet.col_values(1)
+        sales = worksheet.get_all_values()
+        total = 0
+
+        if date not in day_col:
+            print(f"Sorry, we don't have ane register for {date}")
+
+            return False
+        else:
+            for sale in sales:
+                if sale[0] == date:
+                    num_sheet = sale[1]
+                    num = num_sheet.replace(",", ".")
+                    total += float(num)
+
+            print(f"The total sales on {date} is ${total}")
+
+            return True
+
 
 def is_registred():
     """
@@ -284,6 +305,8 @@ def select_worksheet(option):
         worksheet = SHEET.worksheet("deserts_menu")
     elif option.upper() == "ADMIN":
         worksheet = SHEET.worksheet("admin")
+    elif option.upper() == "SALES":
+        worksheet = SHEET.worksheet("sales")
     else:
         worksheet = SHEET.worksheet("clients")
 
@@ -396,6 +419,7 @@ def adm():
     email_password = adm_email_password()
     admin = Admin(email_password[0], email_password[1])
     option = adm_options()
+    adm_functions(admin, option)
 
 
 def adm_email_password():
@@ -439,6 +463,7 @@ def check_password(sheet, col):
 
 
 def adm_options():
+
     print("What do you want to do today?")
     print("A - Check your Sales")
     print("B - Update Expanses")
@@ -455,6 +480,19 @@ def adm_options():
     print(" ")
 
     return option
+
+
+def adm_functions(adm, option):
+
+    if option == 'A':
+        while True:
+            print("Wich day do you want to check?")
+            print("Ex: 30-07-2021")
+            date = input("Enter your answear here:\n")
+            total_sales = adm.check_sales(date)
+
+            if total_sales:
+                break
 
 
 def main():
