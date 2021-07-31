@@ -72,9 +72,9 @@ def need_to_be_register(value):
     if value.lower() == "y":
         print("Good to have you back!")
         print("I just need to check your email.")
-        email = check_email()
         # Passed a 'random' str on the function to return clients list
         worksheet = select_worksheet("random")
+        email = check_email(worksheet, 3)
         row = find_row(email, worksheet)
         customer_data = get_customer_data(row)
 
@@ -88,12 +88,12 @@ def need_to_be_register(value):
     return customer_data
 
 
-def check_email():
+def check_email(sheet, col):
     """
     Check if the email is already registered
     """
-    client_sheet = SHEET.worksheet("clients")
-    email_collum = client_sheet.col_values(3)
+    worksheet = sheet
+    email_collum = worksheet.col_values(col)
 
     while True:
         print("Can you write it for me?")
@@ -107,7 +107,7 @@ def check_email():
                 break
             else:
                 print("Sorry, I can't find your email.")
-                print("Can we try again?\n")
+                print("Let's try again.\n")
 
     return email
 
@@ -269,6 +269,8 @@ def select_worksheet(option):
         worksheet = SHEET.worksheet("drink_menu")
     elif option.upper() == "C":
         worksheet = SHEET.worksheet("deserts_menu")
+    elif option.upper() == "ADMIN":
+        worksheet = SHEET.worksheet("admin")
     else:
         worksheet = SHEET.worksheet("clients")
 
@@ -320,7 +322,10 @@ def total(customer):
     return [today, total]
 
 
-def main():
+def user():
+    """
+    Code used when it is a user
+    """
     print("Welcome to the Coders Bistro\n")
 
     is_registred_answear = is_registred()
@@ -345,6 +350,71 @@ def main():
     print("Thanks for eating with us!")
     print(f"The total of your order is ${order[1]}.")
     print(f'A copy of your order was send for {customer.email}')
+
+
+def adm_user():
+    print("LOADING SYSTEM...\n")
+    print("Do you want to log in as:")
+    print("1 - Admin")
+    print("2 - User")
+    answear = input("Enter your answear here:\n")
+    print(" ")
+    print("# "*15)
+    print(" ")
+    while answear not in ("1", "2"):
+        print("Please choose between one of the otpions.")
+        answear = input("Enter your answear here:\n")
+
+    return answear
+
+
+def run_system(option):
+    if option == "1":
+        adm()
+    elif option == "2":
+        user()
+
+
+def adm():
+    adm_email_password()
+
+
+def adm_email_password():
+    worksheet = select_worksheet("admin")
+    print("First I need to check your email.")
+    check_email(worksheet, 1)
+    print("Now your password.")
+    check_password(worksheet, 2)
+
+    return True
+
+
+def check_password(sheet, col):
+    """
+    Check if the password is valid
+    """
+    worksheet = sheet
+    password_collum = worksheet.col_values(col)
+
+    while True:
+        print("Can you write it for me?")
+        password = input("Enter your answear here:\n")
+        print(" ")
+        print("# "*15)
+        print(" ")
+
+        if password in password_collum:
+            break
+        else:
+            print("Wrong password.")
+            print("Let's try again?\n")
+
+    return True
+
+
+def main():
+    option = adm_user()
+    run_system(option)
 
 
 main()
