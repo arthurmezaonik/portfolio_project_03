@@ -1,6 +1,7 @@
 import gspread
 from google.oauth2.service_account import Credentials
 from datetime import date
+from time import sleep
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -15,7 +16,7 @@ SHEET = GSPREAD_CLIENT.open('coders_bistro')
 
 
 class Customer:
-    "Create a new customer"
+    "Create a customer"
     def __init__(self, f_name, l_name, email):
         # Instance attibutes
         self.f_name = f_name
@@ -28,6 +29,18 @@ class Customer:
 
     def full_name(self):
         return f'{self.f_name} {self.l_name}'
+
+
+class Admin:
+    """
+    Create a admin
+    """
+    def __init__(self, email, password):
+        self.email = email
+        self.password = password
+
+    def info(self):
+        return f'Email: {self.email} Password: {self.password}'
 
 
 def is_registred():
@@ -353,7 +366,11 @@ def user():
 
 
 def adm_user():
-    print("LOADING SYSTEM...\n")
+    print("LOADING SYSTEM...")
+    sleep(2)
+    print(" ")
+    print("# "*15)
+    print(" ")
     print("Do you want to log in as:")
     print("1 - Admin")
     print("2 - User")
@@ -376,17 +393,26 @@ def run_system(option):
 
 
 def adm():
-    adm_email_password()
+    email_password = adm_email_password()
+    admin = Admin(email_password[0], email_password[1])
+    option = adm_options()
 
 
 def adm_email_password():
     worksheet = select_worksheet("admin")
     print("First I need to check your email.")
-    check_email(worksheet, 1)
+    email = check_email(worksheet, 1)
     print("Now your password.")
-    check_password(worksheet, 2)
+    password = check_password(worksheet, 2)
 
-    return True
+    print("Validating data...")
+    sleep(2)
+    print("All good!")
+    print(" ")
+    print("# "*15)
+    print(" ")
+
+    return [email, password]
 
 
 def check_password(sheet, col):
@@ -409,7 +435,26 @@ def check_password(sheet, col):
             print("Wrong password.")
             print("Let's try again?\n")
 
-    return True
+    return password
+
+
+def adm_options():
+    print("What do you want to do today?")
+    print("A - Check your Sales")
+    print("B - Update Expanses")
+    print("C - Check Expanses")
+    print("D - Check your Total")
+    option = input("Enter your answear here:\n").strip().upper()
+
+    while option not in ("A", "B", "C", "D"):
+        print("Choose between one of the otpions.")
+        option = input("Enter your answear here:\n").strip().upper()
+
+    print(" ")
+    print("# "*15)
+    print(" ")
+
+    return option
 
 
 def main():
