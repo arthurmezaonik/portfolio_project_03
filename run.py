@@ -80,6 +80,33 @@ class Admin:
         data = [today, value, description]
         update_worksheet(data, "expenses")
 
+    # Not working
+    def check_expenses(self, date):
+        """
+        Check the sum of the expenses for the chosen day
+        """
+        worksheet = select_worksheet("expenses")
+        day_col = worksheet.col_values(1)
+        expenses = worksheet.get_all_values()
+        total = 0
+
+        print(day_col)
+
+        if date not in day_col:
+            print(f"Sorry, we don't have ane register for {date}")
+
+            return False
+        else:
+            for expense in expenses:
+                if expense[0] == date:
+                    num_sheet = expense[1]
+                    num = num_sheet.replace(",", ".")
+                    total += float(num)
+
+            print(f"The expenses' total on {date} is ${total}")
+
+            return True
+
 
 def is_registred():
     """
@@ -324,8 +351,8 @@ def select_worksheet(option):
         worksheet = SHEET.worksheet("admin")
     elif option.upper() == "SALES":
         worksheet = SHEET.worksheet("sales")
-    elif option.upper() == "EXPANSES":
-        worksheet = SHEET.worksheet("expanses")
+    elif option.upper() == "EXPENSES":
+        worksheet = SHEET.worksheet("expenses")
     else:
         worksheet = SHEET.worksheet("clients")
 
