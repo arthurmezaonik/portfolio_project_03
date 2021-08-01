@@ -52,9 +52,9 @@ class Admin:
         total = 0
 
         if date not in day_col:
-            print(f"Sorry, we don't have ane register for {date}")
+            print(f"We don't have any sale register for {date}")
 
-            return False
+            return [total, True]
         else:
             for sale in sales:
                 if sale[0] == date:
@@ -62,9 +62,7 @@ class Admin:
                     num = num_sheet.replace(",", ".")
                     total += float(num)
 
-            print(f"The sales' total on {date} is ${total}")
-
-            return True
+            return [total, True]
 
     def new_expanse(self):
         """
@@ -80,7 +78,6 @@ class Admin:
         data = [today, value, description]
         update_worksheet(data, "expenses")
 
-    # Not working
     def check_expenses(self, date):
         """
         Check the sum of the expenses for the chosen day
@@ -90,12 +87,10 @@ class Admin:
         expenses = worksheet.get_all_values()
         total = 0
 
-        print(day_col)
-
         if date not in day_col:
-            print(f"Sorry, we don't have ane register for {date}")
+            print(f"We don't have ane expense register for {date}")
 
-            return False
+            return [total, True]
         else:
             for expense in expenses:
                 if expense[0] == date:
@@ -103,9 +98,7 @@ class Admin:
                     num = num_sheet.replace(",", ".")
                     total += float(num)
 
-            print(f"The expenses' total on {date} is ${total}")
-
-            return True
+            return [total, True]
 
 
 def is_registred():
@@ -537,10 +530,14 @@ def adm_functions(adm, option):
             date = input("Enter your answear here:\n")
             total_sales = adm.check_sales(date)
 
-            if total_sales:
+            if total_sales[1]:
                 break
+
+        print(f"The sales' total in {date} is ${total_sales[0]}")
+
     elif option == "B":
         adm.new_expanse()
+
     elif option == 'C':
         while True:
             print("Wich day do you want to check?")
@@ -548,8 +545,39 @@ def adm_functions(adm, option):
             date = input("Enter your answear here:\n")
             total_expenses = adm.check_expenses(date)
 
-            if total_expenses:
+            if total_expenses[1]:
                 break
+
+        print(print_expenses(date))
+        print(f"The expenses' total in {date} is ${total_expenses[0]}")
+
+    elif option == "D":
+        print(day_balance(adm))
+
+
+def print_expenses(date):
+    worksheet = select_worksheet("expenses")
+    expenses = worksheet.get_all_values()
+
+    header = expenses[0]
+    print(f'{header[0]:<15}{header[1]:<10}{header[2]:<20}')
+
+    for expense in expenses:
+        if expense[0] == date:
+            print(f'{expense[0]:<15}${expense[1]:<10}{expense[2]:<20}')
+
+
+def day_balance(adm):
+    print("Wich day do you want to check?")
+    print("Ex: 30-07-2021")
+    date = input("Enter your answear here:\n")
+
+    sales = adm.check_sales(date)[0]
+    expenses = adm.check_expenses(date)[0]
+
+    total = sales - expenses
+
+    return f'In {date} you sold ${sales} and spent ${expenses}. Your total is ${total}.'
 
 
 def main():
