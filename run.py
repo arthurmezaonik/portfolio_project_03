@@ -569,10 +569,11 @@ def adm_functions(adm, option):
             print("Wich day do you want to check?")
             print("Ex: 30-07-2021")
             date = input("Enter your answear here:\n").strip()
-            total_sales = adm.check_sales(date)
 
-            if total_sales[1]:
-                break
+            if validade_date(date):
+                total_sales = adm.check_sales(date)
+                if total_sales[1]:
+                    break
 
         print(f"The sales' total in {date} is ${total_sales[0]}")
 
@@ -586,13 +587,14 @@ def adm_functions(adm, option):
             print("Wich day do you want to check?")
             print("Ex: 30-07-2021")
             date = input("Enter your answear here:\n").strip()
-            total_expenses = adm.check_expenses(date)
 
-            if total_expenses[1]:
-                break
+            if validade_date(date):
+                total_expenses = adm.check_expenses(date)
+                if total_expenses[1]:
+                    break
 
-        print_expenses(date)
-        print(f"The expenses' total in {date} is ${total_expenses[0]}")
+                print_expenses(date)
+                print(f"The expenses' total in {date} is ${total_expenses[0]}")
 
     # Display the day balance
     elif option == "D":
@@ -612,6 +614,7 @@ def print_expenses(date):
     for expense in expenses:
         if expense[0] == date:
             print(f'{expense[0]:<15}${expense[1]:<9}{expense[2]:<20}')
+    print("")
 
 
 def day_balance(adm):
@@ -657,9 +660,23 @@ def main():
     run_system(option)
 
 
+def validade_date(date):
+    date_str = date
+
+    try:
+        datetime.strptime(date_str, '%d-%m-%Y')
+        return True
+
+    except ValueError:
+        print("Incorrect date format. It should be DD-MM-YYYY.")
+        return False
+
+
 print("LOADING SYSTEM...")
 sleep(2)
 print(" ")
 print("# "*15)
 print(" ")
 main()
+
+validade_date('12-10-2021')
