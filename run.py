@@ -111,6 +111,7 @@ class Admin:
             return [total, True]
 
 
+'''
 def is_registred():
     """
     Ask if the user is already registered and return the answear
@@ -125,21 +126,6 @@ def is_registred():
             break
 
     return answear
-
-
-def validate_yes_no(answear):
-    """
-    Validate yes or no questions
-    """
-    try:
-        if answear not in ("Y", "N"):
-            raise ValueError('Choose between Y or N')
-
-    except ValueError as e:
-        print(f"Invalid data: {e}, please try again.\n")
-        return False
-
-    return True
 
 
 def collect_data(value):
@@ -193,21 +179,6 @@ def check_email(sheet, col):
     return email
 
 
-def validate_email(email):
-    """
-    Validate if email has a @ sign
-    """
-    try:
-        if "@" not in email:
-            raise ValueError("Please enter a valid email")
-    except ValueError as e:
-        print(f"Invalid data: {e}")
-        print("Example: code@codersbistro.com\n")
-        return False
-
-    return True
-
-
 def find_row(item, sheet):
     """
     Find the item's row in the specified worksheet
@@ -253,15 +224,6 @@ def new_customer_data():
     print(" ")
 
     return [f_name, l_name, email]
-
-
-def update_worksheet(data, worksheet):
-    """
-    Receives a list of integers to be inserted into a worksheet
-    Update the relevant worksheet with the data provided
-    """
-    worksheet_to_update = select_worksheet(worksheet)
-    worksheet_to_update.append_row(data)
 
 
 def create_customer(data):
@@ -332,32 +294,6 @@ def validate_order(id, worksheet):
         return False
 
     return True
-
-
-def select_worksheet(option):
-    """
-    From the option, select the needed worksheet
-    """
-    worksheet = ""
-
-    if option.upper() == "A":
-        worksheet = SHEET.worksheet("food_menu")
-    elif option.upper() == "B":
-        worksheet = SHEET.worksheet("drink_menu")
-    elif option.upper() == "C":
-        worksheet = SHEET.worksheet("deserts_menu")
-    elif option.upper() == "ADMIN":
-        worksheet = SHEET.worksheet("admin")
-    elif option.upper() == "SALES":
-        worksheet = SHEET.worksheet("sales")
-    elif option.upper() == "EXPENSES":
-        worksheet = SHEET.worksheet("expenses")
-    elif option.upper() == "CLIENTS":
-        worksheet = SHEET.worksheet("clients")
-    else:
-        print("Worksheet name problem")
-
-    return worksheet
 
 
 def item_value(id, sheet):
@@ -448,13 +384,26 @@ def customer():
     print(f'A copy of your order was send for {customer.email}')
 
 
-def adm_user():
+def run_system(option):
     """
-    Ask if the user wants to log in as customer or admin
+    Run the code based on the given option
     """
-    print("Do you want to log in as:")
-    print("1 - Admin")
-    print("2 - Customer")
+    # Admin code
+    if option == "1":
+        adm()
+    # Customer code
+    elif option == "2":
+        customer()
+'''
+
+
+def login_register():
+    """
+    Ask if the user wants to log in or register
+    """
+    print("Do you want to:")
+    print("1 - Log In")
+    print("2 - Register")
     answear = input("Enter your answear here:\n").strip()
     print(" ")
     print("# "*15)
@@ -466,69 +415,142 @@ def adm_user():
     return answear
 
 
-def run_system(option):
-    """
-    Run the code based on the given option
-    """
-    # Admin code
-    if option == "1":
-        adm()
-    # Customer code
-    elif option == "2":
-        customer()
+def action(option, email):
+    user_option = option
+    user_email = email
+
+    if user_option == "1":
+        admin = is_admin(user_email)
+        customer = is_customer(user_email)
+
+        if admin:
+            admin_function(user_email)
+        elif customer:
+            print('is customer')
+        else:
+            print("Email not registered")
 
 
-def adm():
+def collect_email():
     """
-    Code to use when it is admin
+    Collect the user email
     """
-    email_password = adm_email_password()
-    admin = Admin(email_password[0], email_password[1])
+    print("Good to have you back!")
+    print("I just need to check your email.")
 
+    while True:
+        print("Can you write it for me?")
+        email = input("Enter your answear here:\n").strip()
+        print(" ")
+        print("# "*15)
+        print(" ")
+
+        if validate_email(email):
+            break
+
+    return email
+
+
+def validate_email(email):
+    """
+    Validate if email has a @ sign
+    """
+    try:
+        if "@" not in email:
+            raise ValueError("Please enter a valid email")
+    except ValueError as e:
+        print(f"Invalid data: {e}")
+        print("Example: code@codersbistro.com\n")
+        return False
+
+    return True
+
+
+def is_admin(email):
+    admin_sheet = select_worksheet('admin')
+    email_col = admin_sheet.col_values(1)
+
+    if email in email_col:
+        return True
+    else:
+        return False
+
+
+def is_customer(email):
+    customer_sheet = select_worksheet('clients')
+    email_col = customer_sheet.col_values(3)
+
+    if email in email_col:
+        return True
+    else:
+        return False
+
+
+def select_worksheet(option):
+    """
+    From the option, select the needed worksheet
+    """
+    worksheet = ""
+
+    if option.upper() == "A":
+        worksheet = SHEET.worksheet("food_menu")
+    elif option.upper() == "B":
+        worksheet = SHEET.worksheet("drink_menu")
+    elif option.upper() == "C":
+        worksheet = SHEET.worksheet("deserts_menu")
+    elif option.upper() == "ADMIN":
+        worksheet = SHEET.worksheet("admin")
+    elif option.upper() == "SALES":
+        worksheet = SHEET.worksheet("sales")
+    elif option.upper() == "EXPENSES":
+        worksheet = SHEET.worksheet("expenses")
+    elif option.upper() == "CLIENTS":
+        worksheet = SHEET.worksheet("clients")
+    else:
+        print("Worksheet name problem")
+
+    return worksheet
+
+
+def update_worksheet(data, worksheet):
+    """
+    Receives a list of integers to be inserted into a worksheet
+    Update the relevant worksheet with the data provided
+    """
+    worksheet_to_update = select_worksheet(worksheet)
+    worksheet_to_update.append_row(data)
+
+
+def admin_function(email):
+    adm_email = email
+    adm_password = admin_password()
+    adm = Admin(adm_email, adm_password)
+
+    print("Loged in as ADMIN\n")
     print("Do you want to check your options?(Y / N)")
     while working():
         option = adm_options()
-        adm_functions(admin, option)
+        adm_functions(adm, option)
         print("Do you want to check anything else?(Y / N)")
 
     print("System ended.")
 
 
-def adm_email_password():
+def admin_password():
     """
-    Collect validate admin's email and password
+    Collect and validate admin's password
     """
-    worksheet = select_worksheet("admin")
-    print("First I need to check your email.")
-    email = check_email(worksheet, 1)
+    admin_sheet = select_worksheet("admin")
+    password_col = admin_sheet.col_values(2)
     print("Now your password.")
-    password = check_password(worksheet, 2)
-
-    print("Validating data...")
-    sleep(2)
-    print("All good!")
-    print(" ")
-    print("# "*15)
-    print(" ")
-
-    return [email, password]
-
-
-def check_password(sheet, col):
-    """
-    Check if the password is valid
-    """
-    worksheet = sheet
-    password_collum = worksheet.col_values(col)
 
     while True:
-        print("Can you write it for me?")
         password = input("Enter your answear here:\n").strip()
         print(" ")
         print("# "*15)
         print(" ")
 
-        if password in password_collum:
+        if password in password_col:
             break
         else:
             print("Wrong password.")
@@ -593,8 +615,8 @@ def adm_functions(adm, option):
                 if total_expenses[1]:
                     break
 
-                print_expenses(date)
-                print(f"The expenses' total in {date} is ${total_expenses[0]}")
+        print_expenses(date)
+        print(f"The expenses' total in {date} is ${total_expenses[0]}")
 
     # Display the day balance
     elif option == "D":
@@ -652,14 +674,6 @@ def working():
         return False
 
 
-def main():
-    """
-    Run the main code
-    """
-    option = adm_user()
-    run_system(option)
-
-
 def validade_date(date):
     date_str = date
 
@@ -672,11 +686,36 @@ def validade_date(date):
         return False
 
 
-print("LOADING SYSTEM...")
-sleep(2)
-print(" ")
-print("# "*15)
-print(" ")
-main()
+def validate_yes_no(answear):
+    """
+    Validate yes or no questions
+    """
+    try:
+        if answear not in ("Y", "N"):
+            raise ValueError('Choose between Y or N')
 
-validade_date('12-10-2021')
+    except ValueError as e:
+        print(f"Invalid data: {e}, please try again.\n")
+        return False
+
+    return True
+
+
+def main():
+    """
+    Run the main code
+    """
+    # Welcome message
+    print("WELCOME TO CODER'S BISTRO")
+    sleep(2)
+    print(" ")
+    print("# "*15)
+    print(" ")
+
+    # Login or register
+    log_register = login_register()
+    email = collect_email()
+    action(log_register, email)
+
+
+main()
