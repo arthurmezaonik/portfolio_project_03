@@ -111,56 +111,59 @@ class Admin:
             return [total, True]
 
 
-'''
-def is_registred():
+def login_register():
     """
-    Ask if the user is already registered and return the answear
+    Ask if the user wants to log in or register
     """
-    while True:
-        print("Are you registered (Y / N)?")
-        answear = input("Enter your answear here:\n").strip().upper()
-        print(" ")
-        print("# "*15)
-        print(" ")
-        if validate_yes_no(answear):
-            break
+    print("Do you want to:")
+    print("1 - Log In")
+    print("2 - Register")
+    answear = input("Enter your answear here:\n").strip()
+    print(" ")
+    print("# "*15)
+    print(" ")
+    while answear not in ("1", "2"):
+        print("Please choose between one of the otpions.")
+        answear = input("Enter your answear here:\n").strip()
 
     return answear
 
 
-def collect_data(value):
+def run_system(option):
     """
-    Check if the user is really registered.
-    If not, register a new client.
+    Run the code based on the given option
     """
-    data = []
+    user_option = option
 
-    # Code to run if the user is already registered
-    if value == "Y":
-        print("Good to have you back!")
-        print("I just need to check your email.")
-        client_sheet = select_worksheet("clients")
-        email = check_email(client_sheet, 3)
-        row = find_row(email, client_sheet)
-        data = customer_data(row)
+    # Log in option
+    if user_option == "1":
+        user_email = collect_email()
+        admin = is_admin(user_email)
+        customer = is_customer(user_email)
 
-    # Code to run if the user is not registered
-    elif value == "N":
-        print("First time here!")
-        print("Let's make a register for you")
-        print("I just need a few information")
+        # If it is a admin email
+        if admin:
+            admin_function(user_email)
+        # If it is a customer email
+        elif customer:
+            data = customer_data(user_email)
+            customer_function(data)
+        else:
+            print("Email not registered")
+
+    # Register option
+    elif user_option == "2":
         data = new_customer_data()
         update_worksheet(data, "clients")
+        customer_function(data)
 
-    return data
 
-
-def check_email(sheet, col):
+def collect_email():
     """
-    Check if the email is already registered
+    Collect the user email
     """
-    worksheet = sheet
-    email_collum = worksheet.col_values(col)
+    print("Good to have you back!")
+    print("I just need to check your email.")
 
     while True:
         print("Can you write it for me?")
@@ -170,31 +173,133 @@ def check_email(sheet, col):
         print(" ")
 
         if validate_email(email):
-            if email in email_collum:
-                break
-            else:
-                print("Sorry, I can't find your email.")
-                print("Let's try again.\n")
+            break
 
     return email
 
 
-def find_row(item, sheet):
+def validate_email(email):
     """
-    Find the item's row in the specified worksheet
+    Validate if email has a @ sign
     """
-    worksheet = sheet
-    cell = worksheet.find(item)
+    try:
+        if "@" not in email:
+            raise ValueError("Please enter a valid email")
+    except ValueError as e:
+        print(f"Invalid data: {e}")
+        print("Example: code@codersbistro.com\n")
+        return False
 
-    return cell.row
+    return True
 
 
-def customer_data(row):
+def is_admin(email):
+    """
+    Check if email is from a admin account
+    """
+    admin_sheet = select_worksheet('admin')
+    email_col = admin_sheet.col_values(1)
+
+    if email in email_col:
+        return True
+    else:
+        return False
+
+
+def is_customer(email):
+    """
+    Check if email is from a customer account
+    """
+    customer_sheet = select_worksheet('clients')
+    email_col = customer_sheet.col_values(3)
+
+    if email in email_col:
+        return True
+    else:
+        return False
+
+
+def select_worksheet(option):
+    """
+    From the option, select the needed worksheet
+    """
+    worksheet = ""
+
+    # Food worksheet
+    if option.upper() == "A":
+        worksheet = SHEET.worksheet("food_menu")
+    # Drinks worksheet
+    elif option.upper() == "B":
+        worksheet = SHEET.worksheet("drink_menu")
+    # Deserts worksheet
+    elif option.upper() == "C":
+        worksheet = SHEET.worksheet("deserts_menu")
+    # Admin worksheet
+    elif option.upper() == "ADMIN":
+        worksheet = SHEET.worksheet("admin")
+    # Sales worksheet
+    elif option.upper() == "SALES":
+        worksheet = SHEET.worksheet("sales")
+    # Expenses worksheet
+    elif option.upper() == "EXPENSES":
+        worksheet = SHEET.worksheet("expenses")
+    # Clients worksheet
+    elif option.upper() == "CLIENTS":
+        worksheet = SHEET.worksheet("clients")
+    else:
+        print("Worksheet name problem")
+
+    return worksheet
+
+
+def update_worksheet(data, worksheet):
+    """
+    Receives a list of integers to be inserted into a worksheet
+    Update the relevant worksheet with the data provided
+    """
+    worksheet_to_update = select_worksheet(worksheet)
+    worksheet_to_update.append_row(data)
+
+
+def customer_function(data):
+    """
+    Code used when it is a customer
+    """
+    # Create a customer from the collected data
+    customer = create_customer(data)
+    print("All done!")
+    print(f'Welcome {customer.full_name()}')
+
+    # While loop to print the menu on the screen and collect the customer order
+    # Item' value added to the customer balance
+    print("Would you like to check our menu? (Y / N)")
+    while ordering():
+        menu_option = menu_options()
+        menu_sheet = select_worksheet(menu_option)
+        display_menu(menu_sheet)
+        id = customer_order(menu_sheet)
+        value = item_value(id, menu_sheet)
+        add_balance(customer, value)
+        print("Anything else? (Y / N)")
+
+    # Add the order on the sales worksheet
+    total_order = total(customer)
+    update_worksheet(total_order, "sales")
+
+    # Farewell message
+    print("Thanks for eating with us!")
+    print(f"The total of your order is ${total_order[1]}.")
+    print(f'A copy of your order was send for {customer.email}')
+
+
+def customer_data(email):
     """
     Collect the customer data from the worksheet
     """
-    client_sheet = select_worksheet("clients")
-    customer_data = client_sheet.row_values(row)
+    customer_sheet = select_worksheet('clients')
+    user_email = email
+    row = find_row(user_email, customer_sheet)
+    customer_data = customer_sheet.row_values(row)
 
     return [customer_data[0], customer_data[1], customer_data[2]]
 
@@ -224,6 +329,16 @@ def new_customer_data():
     print(" ")
 
     return [f_name, l_name, email]
+
+
+def find_row(item, sheet):
+    """
+    Find the item's row in the specified worksheet
+    """
+    worksheet = sheet
+    cell = worksheet.find(item)
+
+    return cell.row
 
 
 def create_customer(data):
@@ -345,180 +460,6 @@ def total(customer):
         total = round(total, 2)
 
     return [today, total]
-
-
-def customer():
-    """
-    Code used when it is a customer
-    """
-    # Welcome message
-    print("Welcome to the Coders Bistro\n")
-
-    # Check if the customer need to be register or not
-    # Create a customer from the collected data
-    register = is_registred()
-    customer_data = collect_data(register)
-    customer = create_customer(customer_data)
-    print("All done!")
-    print(f'Welcome {customer.full_name()}')
-
-    # While loop to print the menu on the screen and collect the customer order
-    # Item' value added to the customer balance
-    print("Would you like to check our menu? (Y / N)")
-    while ordering():
-        menu_option = menu_options()
-        menu_sheet = select_worksheet(menu_option)
-        display_menu(menu_sheet)
-        id = customer_order(menu_sheet)
-        value = item_value(id, menu_sheet)
-        add_balance(customer, value)
-        print("Anything else? (Y / N)")
-
-    # Add the order on the sales worksheet
-    total_order = total(customer)
-    update_worksheet(total_order, "sales")
-
-    # Farewell message
-    print("Thanks for eating with us!")
-    print(f"The total of your order is ${total_order[1]}.")
-    print(f'A copy of your order was send for {customer.email}')
-
-
-def run_system(option):
-    """
-    Run the code based on the given option
-    """
-    # Admin code
-    if option == "1":
-        adm()
-    # Customer code
-    elif option == "2":
-        customer()
-'''
-
-
-def login_register():
-    """
-    Ask if the user wants to log in or register
-    """
-    print("Do you want to:")
-    print("1 - Log In")
-    print("2 - Register")
-    answear = input("Enter your answear here:\n").strip()
-    print(" ")
-    print("# "*15)
-    print(" ")
-    while answear not in ("1", "2"):
-        print("Please choose between one of the otpions.")
-        answear = input("Enter your answear here:\n").strip()
-
-    return answear
-
-
-def action(option, email):
-    user_option = option
-    user_email = email
-
-    if user_option == "1":
-        admin = is_admin(user_email)
-        customer = is_customer(user_email)
-
-        if admin:
-            admin_function(user_email)
-        elif customer:
-            print('is customer')
-        else:
-            print("Email not registered")
-
-
-def collect_email():
-    """
-    Collect the user email
-    """
-    print("Good to have you back!")
-    print("I just need to check your email.")
-
-    while True:
-        print("Can you write it for me?")
-        email = input("Enter your answear here:\n").strip()
-        print(" ")
-        print("# "*15)
-        print(" ")
-
-        if validate_email(email):
-            break
-
-    return email
-
-
-def validate_email(email):
-    """
-    Validate if email has a @ sign
-    """
-    try:
-        if "@" not in email:
-            raise ValueError("Please enter a valid email")
-    except ValueError as e:
-        print(f"Invalid data: {e}")
-        print("Example: code@codersbistro.com\n")
-        return False
-
-    return True
-
-
-def is_admin(email):
-    admin_sheet = select_worksheet('admin')
-    email_col = admin_sheet.col_values(1)
-
-    if email in email_col:
-        return True
-    else:
-        return False
-
-
-def is_customer(email):
-    customer_sheet = select_worksheet('clients')
-    email_col = customer_sheet.col_values(3)
-
-    if email in email_col:
-        return True
-    else:
-        return False
-
-
-def select_worksheet(option):
-    """
-    From the option, select the needed worksheet
-    """
-    worksheet = ""
-
-    if option.upper() == "A":
-        worksheet = SHEET.worksheet("food_menu")
-    elif option.upper() == "B":
-        worksheet = SHEET.worksheet("drink_menu")
-    elif option.upper() == "C":
-        worksheet = SHEET.worksheet("deserts_menu")
-    elif option.upper() == "ADMIN":
-        worksheet = SHEET.worksheet("admin")
-    elif option.upper() == "SALES":
-        worksheet = SHEET.worksheet("sales")
-    elif option.upper() == "EXPENSES":
-        worksheet = SHEET.worksheet("expenses")
-    elif option.upper() == "CLIENTS":
-        worksheet = SHEET.worksheet("clients")
-    else:
-        print("Worksheet name problem")
-
-    return worksheet
-
-
-def update_worksheet(data, worksheet):
-    """
-    Receives a list of integers to be inserted into a worksheet
-    Update the relevant worksheet with the data provided
-    """
-    worksheet_to_update = select_worksheet(worksheet)
-    worksheet_to_update.append_row(data)
 
 
 def admin_function(email):
@@ -714,8 +655,8 @@ def main():
 
     # Login or register
     log_register = login_register()
-    email = collect_email()
-    action(log_register, email)
+    # Run the system based on the otpion
+    run_system(log_register)
 
 
 main()
