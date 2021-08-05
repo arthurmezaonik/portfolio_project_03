@@ -81,9 +81,9 @@ class Admin:
         today = date.today().strftime("%d-%m-%Y")
         print("How much is the expnase?")
         print("Example: 15.50")
-        value = float(input("Enter your answear here:\n"))
+        value = float(input("Enter your answer here:\n"))
         print("Give a small description for your expanse")
-        description = input("Enter your answear here:\n")
+        description = input("Enter your answer here:\n")
 
         data = [today, value, description]
         update_worksheet(data, "expenses")
@@ -118,15 +118,15 @@ def login_register():
     print("Do you want to:")
     print("1 - Log In")
     print("2 - Register")
-    answear = input("Enter your answear here:\n").strip()
+    answer = input("Enter your answer here:\n").strip()
     print(" ")
     print("# "*15)
     print(" ")
-    while answear not in ("1", "2"):
+    while answer not in ("1", "2"):
         print("Please choose between one of the otpions.")
-        answear = input("Enter your answear here:\n").strip()
+        answer = input("Enter your answer here:\n").strip()
 
-    return answear
+    return answer
 
 
 def run_system(option):
@@ -137,37 +137,69 @@ def run_system(option):
 
     # Log in option
     if user_option == "1":
-        user_email = collect_email()
-        admin = is_admin(user_email)
-        customer = is_customer(user_email)
+        print("Good to have you back!")
+        print("I just need to check your email.")
+        print("Can you write it for me?")
 
-        # If it is a admin email
-        if admin:
-            admin_function(user_email)
-        # If it is a customer email
-        elif customer:
-            data = customer_data(user_email)
-            customer_function(data)
-        else:
-            print("Email not registered")
+        while True:
+            user_email = collect_email()
+            admin = is_admin(user_email)
+            customer = is_customer(user_email)
+            # If it is a admin email
+            if admin:
+                admin_function(user_email)
+                break
+            # If it is a customer email
+            elif customer:
+                data = customer_data(user_email)
+                customer_function(data)
+                break
+            else:
+                print("Sorry, I couldn't find your email")
+                answer = try_again_question()
+                # Try again
+                if answer == "1":
+                    print("Can you write your email again?")
+                    pass
+                # Register
+                elif answer == "2":
+                    print("Let's make a register for you!")
+                    print("I need some basic info.\n")
+                    data = new_customer_data()
+                    update_worksheet(data, "clients")
+                    customer_function(data)
+                    break
 
     # Register option
     elif user_option == "2":
+        print("Let's make a register for you!")
+        print("I need some basic info.\n")
         data = new_customer_data()
         update_worksheet(data, "clients")
         customer_function(data)
+
+
+def try_again_question():
+    print("Do you want:")
+    print("1 - Try again")
+    print("2 - Register")
+    answer = ""
+
+    while answer not in ("1", "2"):
+        answer = input("Enter your answer here:\n").strip()
+        print(" ")
+        print("# "*15)
+        print(" ")
+
+    return answer
 
 
 def collect_email():
     """
     Collect the user email
     """
-    print("Good to have you back!")
-    print("I just need to check your email.")
-
     while True:
-        print("Can you write it for me?")
-        email = input("Enter your answear here:\n").strip()
+        email = input("Enter your answer here:\n").strip()
         print(" ")
         print("# "*15)
         print(" ")
@@ -356,14 +388,14 @@ def menu_options():
     print("A - Foods menu")
     print("B - Drinks menu")
     print("C - Deserts menu")
-    menu_option = input("Enter your answear here:\n").upper().strip()
+    menu_option = input("Enter your answer here:\n").upper().strip()
     print(" ")
     print("# "*15)
     print(" ")
 
     while menu_option not in ("A", "B", "C"):
         print("Please choose between one of the options")
-        menu_option = input("Enter your answear here:\n").upper().strip()
+        menu_option = input("Enter your answer here:\n").upper().strip()
 
     return menu_option
 
@@ -384,7 +416,7 @@ def customer_order(worksheet):
     """
     while True:
         print("What's the ID from the item that you want?")
-        id = input("Enter your answear here:\n").strip()
+        id = input("Enter your answer here:\n").strip()
         print(" ")
         print("# "*15)
         print(" ")
@@ -433,17 +465,17 @@ def ordering():
     Check if the user wants to keep ordering
     """
     while True:
-        answear = input("Enter your answear here:\n").strip().upper()
+        answer = input("Enter your answer here:\n").strip().upper()
         print(" ")
         print("# "*15)
         print(" ")
 
-        if validate_yes_no(answear):
+        if validate_yes_no(answer):
             break
 
-    if answear == "Y":
+    if answer == "Y":
         return True
-    elif answear == "N":
+    elif answer == "N":
         return False
 
 
@@ -486,7 +518,7 @@ def admin_password():
     print("Now your password.")
 
     while True:
-        password = input("Enter your answear here:\n").strip()
+        password = input("Enter your answer here:\n").strip()
         print(" ")
         print("# "*15)
         print(" ")
@@ -509,11 +541,11 @@ def adm_options():
     print("B - Update Expanses")
     print("C - Check Expanses")
     print("D - Check your Total")
-    option = input("Enter your answear here:\n").strip().upper()
+    option = input("Enter your answer here:\n").strip().upper()
 
     while option not in ("A", "B", "C", "D"):
         print("Choose between one of the otpions.")
-        option = input("Enter your answear here:\n").strip().upper()
+        option = input("Enter your answer here:\n").strip().upper()
 
     print(" ")
     print("# "*15)
@@ -531,7 +563,7 @@ def adm_functions(adm, option):
         while True:
             print("Wich day do you want to check?")
             print("Ex: 30-07-2021")
-            date = input("Enter your answear here:\n").strip()
+            date = input("Enter your answer here:\n").strip()
 
             if validade_date(date):
                 total_sales = adm.check_sales(date)
@@ -549,7 +581,7 @@ def adm_functions(adm, option):
         while True:
             print("Wich day do you want to check?")
             print("Ex: 30-07-2021")
-            date = input("Enter your answear here:\n").strip()
+            date = input("Enter your answer here:\n").strip()
 
             if validade_date(date):
                 total_expenses = adm.check_expenses(date)
@@ -586,7 +618,7 @@ def day_balance(adm):
     """
     print("Wich day do you want to check?")
     print("Ex: 30-07-2021")
-    date = input("Enter your answear here:\n").strip()
+    date = input("Enter your answer here:\n").strip()
 
     sales = adm.check_sales(date)[0]
     expenses = adm.check_expenses(date)[0]
@@ -601,17 +633,17 @@ def working():
     Check if the admin want to keep working
     """
     while True:
-        answear = input("Enter your answear here:\n").strip().upper()
+        answer = input("Enter your answer here:\n").strip().upper()
         print(" ")
         print("# "*15)
         print(" ")
 
-        if validate_yes_no(answear):
+        if validate_yes_no(answer):
             break
 
-    if answear == "Y":
+    if answer == "Y":
         return True
-    elif answear == "N":
+    elif answer == "N":
         return False
 
 
@@ -627,12 +659,12 @@ def validade_date(date):
         return False
 
 
-def validate_yes_no(answear):
+def validate_yes_no(answer):
     """
     Validate yes or no questions
     """
     try:
-        if answear not in ("Y", "N"):
+        if answer not in ("Y", "N"):
             raise ValueError('Choose between Y or N')
 
     except ValueError as e:
