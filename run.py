@@ -100,7 +100,7 @@ class Admin:
         total = 0
 
         if date not in day_col:
-            print(f"We don't have ane expense register for {date}")
+            print(f"We don't have an expense register for {date}")
 
             return [total, True]
         else:
@@ -119,13 +119,13 @@ def login_register():
     """
     print("Do you want to:")
     print("1 - Log In")
-    print("2 - Register")
+    print("2 - Create an account")
     answer = input("Enter your answer here:\n").strip()
     print(" ")
     print("# "*15)
     print(" ")
     while answer not in ("1", "2"):
-        print("Please choose between one of the otpions.")
+        print("Please choose between one of the options.")
         answer = input("Enter your answer here:\n").strip()
 
     return answer
@@ -165,26 +165,29 @@ def run_system(option):
                     pass
                 # Register
                 elif answer == "2":
-                    print("Let's make a customer account for you!")
-                    print("I need some basic info.\n")
-                    data = new_customer_data()
-                    update_worksheet(data, "clients")
-                    customer_function(data)
+                    register()
                     break
 
     # Register option
     elif user_option == "2":
-        print("Let's make a customer account for you!")
-        print("I need some basic info.\n")
-        data = new_customer_data()
-        update_worksheet(data, "clients")
-        customer_function(data)
+        register()
+
+
+def register():
+    """
+    Register the user as a new client
+    """
+    print("Let's make a customer account for you!")
+    print("I need some basic info.\n")
+    data = new_customer_data()
+    update_worksheet(data, "clients")
+    customer_function(data)
 
 
 def try_again_question():
     print("Do you want:")
     print("1 - Try again")
-    print("2 - Register")
+    print("2 - Create an account")
     answer = ""
 
     while answer not in ("1", "2"):
@@ -339,7 +342,7 @@ def new_customer_data():
     Colect customer data and check if its not already registered
     """
     client_sheet = select_worksheet('clients')
-    email_collum = client_sheet.col_values(3)
+    email_column = client_sheet.col_values(3)
 
     f_name = input("What's your first name?\n").capitalize().strip()
     l_name = input("What's your last name?\n").capitalize().strip()
@@ -347,7 +350,7 @@ def new_customer_data():
     while True:
         email = input("What's your email?\n").strip()
 
-        if email not in email_collum:
+        if email not in email_column:
             if validate_email(email):
                 break
         else:
@@ -519,7 +522,7 @@ def admin_function(email):
     adm_password = admin_password()
     adm = Admin(adm_email, adm_password)
 
-    print("Loged in as ADMIN\n")
+    print("Logged in as ADMIN\n")
     print("Do you want to check your options?(Y / N)")
     while working():
         option = adm_options()
@@ -564,7 +567,7 @@ def adm_options():
     option = input("Enter your answer here:\n").strip().upper()
 
     while option not in ("A", "B", "C", "D"):
-        print("Choose between one of the otpions.")
+        print("Choose between one of the options.")
         option = input("Enter your answer here:\n").strip().upper()
 
     print(" ")
@@ -581,7 +584,7 @@ def adm_functions(adm, option):
     # Check the sales' total
     if option == 'A':
         while True:
-            print("Wich day do you want to check?")
+            print("Which day do you want to check?")
             print("Ex: 30-07-2021")
             date = input("Enter your answer here:\n").strip()
 
@@ -599,7 +602,7 @@ def adm_functions(adm, option):
     # Check the expenses' total
     elif option == 'C':
         while True:
-            print("Wich day do you want to check?")
+            print("Which day do you want to check?")
             print("Ex: 30-07-2021")
             date = input("Enter your answer here:\n").strip()
 
@@ -636,7 +639,7 @@ def day_balance(adm):
     """
     Print the total balance from the chosen day
     """
-    print("Wich day do you want to check?")
+    print("Which day do you want to check?")
     print("Ex: 30-07-2021")
     date = input("Enter your answer here:\n").strip()
 
