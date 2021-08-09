@@ -16,7 +16,9 @@ SHEET = GSPREAD_CLIENT.open('coders_bistro')
 
 
 class Customer:
-    "Create a customer"
+    '''
+    Create a customer
+    '''
     def __init__(self, f_name, l_name, email):
         # Instance attibutes
         self.f_name = f_name
@@ -28,7 +30,7 @@ class Customer:
         """
         Return the clients full info
         """
-        return f'Client: {self.f_name} {self.l_name}.Email: {self.email}.Balance: {self.balance}'
+        return (f'Client: {self.full_name()}. Email: {self.email}. Balance: {self.balance}')
 
     def full_name(self):
         """
@@ -186,6 +188,7 @@ def try_again_question():
     answer = ""
 
     while answer not in ("1", "2"):
+        print("Invalid option, please choose between 1 or 2.")
         answer = input("Enter your answer here:\n").strip()
         print(" ")
         print("# "*15)
@@ -314,14 +317,9 @@ def customer_function(data):
         add_balance(customer, value)
         print("Anything else? (Y / N)")
 
-    # Add the order on the sales worksheet
-    total_order = total(customer)
-    update_worksheet(total_order, "sales")
-
     # Farewell message
-    print("Thanks for eating with us!")
-    print(f"The total of your order is ${total_order[1]}.")
-    print(f'A copy of your order was send for {customer.email}')
+    farewell_message = customer_farewell_message(customer)
+    print(farewell_message)
 
 
 def customer_data(email):
@@ -492,6 +490,25 @@ def total(customer):
         total = round(total, 2)
 
     return [today, total]
+
+
+def customer_farewell_message(customer):
+    '''
+    Displays a fareweel message depending on the final balance
+    If balance > 0, add the sale on the sales worksheet
+    '''
+    # Generate the final order
+    order = total(customer)
+    order_value = order[1]
+
+    if order_value == 0:
+        return 'Thanks for visiting.\nWe hope you come back soon.'
+    elif order_value > 0:
+        # Add order on the sales worksheet
+        update_worksheet(order, "sales")
+        return 'Thanks for eating with us!'
+    else:
+        return 'Error message: farewell function.'
 
 
 def admin_function(email):
