@@ -113,7 +113,7 @@ class Admin:
             return [total, True]
 
 
-def login_register():
+def login_or_register():
     """
     Ask if the user wants to log in or register
     """
@@ -310,12 +310,22 @@ def customer_function(data):
     # Item' value added to the customer balance
     print("Would you like to check our menu? (Y / N)")
     while ordering():
+        # Display menu
         menu_option = menu_options()
         menu_sheet = select_worksheet(menu_option)
         display_menu(menu_sheet)
-        id = customer_order(menu_sheet)
-        value = item_value(id, menu_sheet)
-        add_balance(customer, value)
+        # Select item
+        item_id = customer_order(menu_sheet)
+        item_row = find_row(item_id, menu_sheet)
+        # From ID and row get item informations
+        plate = item_name(item_row, menu_sheet)
+        value = item_value(item_row, menu_sheet)
+        quantity = item_quantity()
+        order = [plate, value, quantity]
+        print(order)
+        print("Noted!\n")
+
+        add_balance(customer, order[1])
         print("Anything else? (Y / N)")
 
     # Farewell message
@@ -396,6 +406,8 @@ def menu_options():
         print("C - Deserts menu")
         menu_option = input("Enter your answer here:\n").upper().strip()
 
+        end_section()
+
     return menu_option
 
 
@@ -420,7 +432,6 @@ def customer_order(worksheet):
         end_section()
 
         if validate_order(id, worksheet):
-            print("Noted!")
             break
 
     return id
@@ -441,14 +452,52 @@ def validate_order(id, worksheet):
     return True
 
 
-def item_value(id, sheet):
+def item_name(row, sheet):
+    """
+    Return the name from the chosen item
+    """
+    item_row = sheet.row_values(row)
+
+    return item_row[1]
+
+
+def item_value(row, sheet):
     """
     Return the value from the chosen item
     """
-    row = find_row(id, sheet)
     item_row = sheet.row_values(row)
 
     return item_row[2]
+
+
+def item_quantity():
+    """
+    Return the quantity from the chosen item
+    """
+    print("How many do you want?")
+    print("Ex: 8 ")
+    quantity = input("Enter your answear here: \n").strip()
+
+    end_section()
+
+    while not validate_item_quantity(quantity):
+        quantity = input("Enter your answear here: \n").strip()
+
+        end_section()
+
+    return quantity
+
+
+def validate_item_quantity(quantity):
+    """
+    Validate if the quantity is a int number
+    """
+    try:
+        int(quantity)
+        return True
+    except ValueError:
+        print("Please enter a hole number")
+        print("Ex: 8")
 
 
 def add_balance(customer, value):
@@ -511,21 +560,21 @@ def customer_farewell_message(customer):
 
 
 def admin_function(email):
-    adm_email = email
-    adm_password = admin_password()
-    adm = Admin(adm_email, adm_password)
+    admin_email = email
+    admin_password = collect_admin_password()
+    admin = Admin(admin_email, admin_password)
 
     print("Logged in as ADMIN\n")
     print("Do you want to check your options?(Y / N)")
     while working():
-        option = adm_options()
-        adm_functions(adm, option)
+        option = admin_options()
+        admin_functions(admin, option)
         print("Do you want to check anything else?(Y / N)")
 
     print("System ended.")
 
 
-def admin_password():
+def collect_admin_password():
     """
     Collect and validate admin's password
     """
@@ -547,7 +596,7 @@ def admin_password():
     return password
 
 
-def adm_options():
+def admin_options():
     """
     Displays admin options
     """
@@ -567,7 +616,7 @@ def adm_options():
     return option
 
 
-def adm_functions(adm, option):
+def admin_functions(adm, option):
     """
     From the admin option, execute the code
     """
@@ -715,7 +764,7 @@ def main():
     end_section()
 
     # Login or register
-    log_register = login_register()
+    log_register = login_or_register()
     # Run the system based on the otpion
     run_system(log_register)
 
