@@ -20,7 +20,7 @@ class Customer:
     Create a customer
     '''
     def __init__(self, f_name, l_name, email):
-        # Instance attibutes
+        # Instance attributes
         self.f_name = f_name
         self.l_name = l_name
         self.email = email
@@ -76,15 +76,15 @@ class Admin:
 
             return [total, True]
 
-    def new_expanse(self):
+    def new_expense(self):
         """
-        Register a new expanse on the worksheet
+        Register a new expense on the worksheet
         """
         today = date.today().strftime("%d-%m-%Y")
         print("How much is the expnase?")
         print("Example: 15.50")
         value = float(input("Enter your answer here:\n"))
-        print("Give a small description for your expanse")
+        print("Give a small description for your expense")
         description = input("Enter your answer here:\n")
 
         data = [today, value, description]
@@ -165,7 +165,7 @@ def run_system(option):
                     pass
                 # Register
                 elif answer == "2":
-                    print("Let's make a register for you!")
+                    print("Let's make a customer account for you!")
                     print("I need some basic info.\n")
                     data = new_customer_data()
                     update_worksheet(data, "clients")
@@ -174,7 +174,7 @@ def run_system(option):
 
     # Register option
     elif user_option == "2":
-        print("Let's make a register for you!")
+        print("Let's make a customer account for you!")
         print("I need some basic info.\n")
         data = new_customer_data()
         update_worksheet(data, "clients")
@@ -382,7 +382,7 @@ def menu_options():
     """
     Present the menus and return user otpion
     """
-    print("Wich menu do you want to check?")
+    print("Which menu do you want to check?")
     print("A - Foods menu")
     print("B - Drinks menu")
     print("C - Deserts menu")
@@ -392,7 +392,10 @@ def menu_options():
     print(" ")
 
     while menu_option not in ("A", "B", "C"):
-        print("Please choose between one of the options")
+        print("Please choose one of the options:")
+        print("A - Foods menu")
+        print("B - Drinks menu")
+        print("C - Deserts menu")
         menu_option = input("Enter your answer here:\n").upper().strip()
 
     return menu_option
@@ -555,8 +558,8 @@ def adm_options():
     """
     print("What do you want to do today?")
     print("A - Check your Sales")
-    print("B - Update Expanses")
-    print("C - Check Expanses")
+    print("B - Update Expenses")
+    print("C - Check Expenses")
     print("D - Check your Total")
     option = input("Enter your answer here:\n").strip().upper()
 
@@ -589,11 +592,11 @@ def adm_functions(adm, option):
 
         print(f"The sales' total in {date} is ${total_sales[0]}")
 
-    # Create a new expanse
+    # Create a new expense
     elif option == "B":
-        adm.new_expanse()
+        adm.new_expense()
 
-    # Check the expanses' total
+    # Check the expenses' total
     elif option == 'C':
         while True:
             print("Wich day do you want to check?")
@@ -615,7 +618,7 @@ def adm_functions(adm, option):
 
 def print_expenses(date):
     """
-    From the worksheet, display the expanses
+    From the worksheet, display the expenses
     """
     worksheet = select_worksheet("expenses")
     expenses = worksheet.get_all_values()
