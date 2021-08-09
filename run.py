@@ -121,9 +121,9 @@ def login_register():
     print("1 - Log In")
     print("2 - Create an account")
     answer = input("Enter your answer here:\n").strip()
-    print(" ")
-    print("# "*15)
-    print(" ")
+
+    end_section()
+
     while answer not in ("1", "2"):
         print("Please choose between one of the options.")
         answer = input("Enter your answer here:\n").strip()
@@ -193,9 +193,8 @@ def try_again_question():
     while answer not in ("1", "2"):
         print("Invalid option, please choose between 1 or 2.")
         answer = input("Enter your answer here:\n").strip()
-        print(" ")
-        print("# "*15)
-        print(" ")
+
+        end_section()
 
     return answer
 
@@ -206,9 +205,8 @@ def collect_email():
     """
     while True:
         email = input("Enter your answer here:\n").strip()
-        print(" ")
-        print("# "*15)
-        print(" ")
+
+        end_section()
 
         if validate_email(email):
             break
@@ -357,9 +355,7 @@ def new_customer_data():
             print("Sorry, this email is already in use")
             print("Can we try again?\n")
 
-    print(" ")
-    print("# "*15)
-    print(" ")
+    end_section()
 
     return [f_name, l_name, email]
 
@@ -390,9 +386,8 @@ def menu_options():
     print("B - Drinks menu")
     print("C - Deserts menu")
     menu_option = input("Enter your answer here:\n").upper().strip()
-    print(" ")
-    print("# "*15)
-    print(" ")
+
+    end_section()
 
     while menu_option not in ("A", "B", "C"):
         print("Please choose one of the options:")
@@ -421,9 +416,8 @@ def customer_order(worksheet):
     while True:
         print("What's the ID from the item that you want?")
         id = input("Enter your answer here:\n").strip()
-        print(" ")
-        print("# "*15)
-        print(" ")
+
+        end_section()
 
         if validate_order(id, worksheet):
             print("Noted!")
@@ -470,9 +464,8 @@ def ordering():
     """
     while True:
         answer = input("Enter your answer here:\n").strip().upper()
-        print(" ")
-        print("# "*15)
-        print(" ")
+
+        end_section()
 
         if validate_yes_no(answer):
             break
@@ -542,9 +535,8 @@ def admin_password():
 
     while True:
         password = input("Enter your answer here:\n").strip()
-        print(" ")
-        print("# "*15)
-        print(" ")
+
+        end_section()
 
         if password in password_col:
             break
@@ -570,9 +562,7 @@ def adm_options():
         print("Choose between one of the options.")
         option = input("Enter your answer here:\n").strip().upper()
 
-    print(" ")
-    print("# "*15)
-    print(" ")
+    end_section()
 
     return option
 
@@ -584,9 +574,7 @@ def adm_functions(adm, option):
     # Check the sales' total
     if option == 'A':
         while True:
-            print("Which day do you want to check?")
-            print("Ex: 30-07-2021")
-            date = input("Enter your answer here:\n").strip()
+            date = collect_date()
 
             if validade_date(date):
                 total_sales = adm.check_sales(date)
@@ -602,9 +590,7 @@ def adm_functions(adm, option):
     # Check the expenses' total
     elif option == 'C':
         while True:
-            print("Which day do you want to check?")
-            print("Ex: 30-07-2021")
-            date = input("Enter your answer here:\n").strip()
+            date = collect_date()
 
             if validade_date(date):
                 total_expenses = adm.check_expenses(date)
@@ -617,6 +603,17 @@ def adm_functions(adm, option):
     # Display the day balance
     elif option == "D":
         print(day_balance(adm))
+
+
+def collect_date():
+    '''
+    Collect the date and validate it.
+    '''
+    print("Which day do you want to check?")
+    print("Ex: July 30th, 2021 would be 30-07-2021")
+    date = input("Enter your answer here:\n").strip()
+
+    return date
 
 
 def print_expenses(date):
@@ -639,9 +636,11 @@ def day_balance(adm):
     """
     Print the total balance from the chosen day
     """
-    print("Which day do you want to check?")
-    print("Ex: 30-07-2021")
-    date = input("Enter your answer here:\n").strip()
+    while True:
+        date = collect_date()
+
+        if validade_date(date):
+            break
 
     sales = adm.check_sales(date)[0]
     expenses = adm.check_expenses(date)[0]
@@ -657,9 +656,8 @@ def working():
     """
     while True:
         answer = input("Enter your answer here:\n").strip().upper()
-        print(" ")
-        print("# "*15)
-        print(" ")
+
+        end_section()
 
         if validate_yes_no(answer):
             break
@@ -697,6 +695,15 @@ def validate_yes_no(answer):
     return True
 
 
+def end_section():
+    '''
+    Print a # line to end the sections
+    '''
+    print(" ")
+    print("# "*15)
+    print(" ")
+
+
 def main():
     """
     Run the main code
@@ -704,9 +711,8 @@ def main():
     # Welcome message
     print("WELCOME TO CODER'S BISTRO")
     sleep(2)
-    print(" ")
-    print("# "*15)
-    print(" ")
+
+    end_section()
 
     # Login or register
     log_register = login_register()
