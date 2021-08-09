@@ -188,7 +188,9 @@ def try_again_question():
     print("Do you want:")
     print("1 - Try again")
     print("2 - Create an account")
-    answer = ""
+    answer = input("Enter your answer here:\n").strip()
+
+    end_section()
 
     while answer not in ("1", "2"):
         print("Invalid option, please choose between 1 or 2.")
@@ -314,9 +316,11 @@ def customer_function(data):
         menu_option = menu_options()
         menu_sheet = select_worksheet(menu_option)
         display_menu(menu_sheet)
+
         # Select item
         item_id = customer_order(menu_sheet)
         item_row = find_row(item_id, menu_sheet)
+
         # From ID and row get item informations
         plate = item_name(item_row, menu_sheet)
         value = item_value(item_row, menu_sheet)
@@ -325,7 +329,7 @@ def customer_function(data):
         print(order)
         print("Noted!\n")
 
-        add_balance(customer, order[1])
+        add_balance(customer, order)
         print("Anything else? (Y / N)")
 
     # Farewell message
@@ -467,7 +471,7 @@ def item_value(row, sheet):
     """
     item_row = sheet.row_values(row)
 
-    return item_row[2]
+    return float(item_row[2])
 
 
 def item_quantity():
@@ -485,7 +489,7 @@ def item_quantity():
 
         end_section()
 
-    return quantity
+    return int(quantity)
 
 
 def validate_item_quantity(quantity):
@@ -500,11 +504,11 @@ def validate_item_quantity(quantity):
         print("Ex: 8")
 
 
-def add_balance(customer, value):
+def add_balance(customer, order):
     """
-    Add value on the customer balance
+    Add order on the customer balance
     """
-    customer.balance.append(float(value))
+    customer.balance.append(order)
 
 
 def ordering():
@@ -530,14 +534,17 @@ def total(customer):
     Calculate the total for the customer order
     """
     order = customer.balance
-    total = 0
+    total_order = 0
     today = date.today().strftime("%d-%m-%Y")
 
-    for value in order:
-        total += value
-        total = round(total, 2)
+    for item in order:
+        # Item value x item quantity
+        item_total = item[1] * item[2]
 
-    return [today, total]
+        total_order += item_total
+        total_order = round(total_order, 2)
+
+    return [today, total_order]
 
 
 def customer_farewell_message(customer):
@@ -546,14 +553,14 @@ def customer_farewell_message(customer):
     If balance > 0, add the sale on the sales worksheet
     '''
     # Generate the final order
-    order = total(customer)
-    order_value = order[1]
+    total_order = total(customer)
+    order_value = total_order[1]
 
     if order_value == 0:
         return 'Thanks for visiting.\nWe hope you come back soon.'
     elif order_value > 0:
         # Add order on the sales worksheet
-        update_worksheet(order, "sales")
+        update_worksheet(total_order, "sales")
         return 'Thanks for eating with us!'
     else:
         return 'Error message: farewell function.'
