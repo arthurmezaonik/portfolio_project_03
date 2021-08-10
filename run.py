@@ -2,6 +2,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 from datetime import date, datetime
 from time import sleep
+from email_validator import validate_email, EmailNotValidError
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -259,25 +260,27 @@ def collect_email():
 
         end_section()
 
-        if validate_email(email):
+        if valid_email(email):
             break
 
     return email
 
 
-def validate_email(email):
+def valid_email(email):
     """
-    Validate if email has a @ sign
+    Validate the email address
     """
     try:
-        if "@" not in email:
-            raise ValueError("Please enter a valid email")
-    except ValueError as e:
-        print(f"Invalid data: {e}")
-        print("Example: code@codersbistro.com\n")
-        return False
+        # Validate.
+        validate_email(email)
 
-    return True
+        return True
+
+    except EmailNotValidError as e:
+        # email is not valid, exception message is human-readable
+        print(str(e))
+        print("Example: code@codersbistro.com")
+        print('Lets try again')
 
 
 def is_admin(email):
