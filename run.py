@@ -1,8 +1,8 @@
 import gspread
 from google.oauth2.service_account import Credentials
+from email_validator import validate_email, EmailNotValidError
 from datetime import date, datetime
 from time import sleep
-from email_validator import validate_email, EmailNotValidError
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -133,7 +133,7 @@ class Admin:
         today = date.today().strftime("%d-%m-%Y")
         print("How much is the expnase?")
         print("Example: 15.50")
-        value = float(input("Enter your answer here:\n"))
+        value = validate_expense_value()
         print("Give a small description for your expense")
         description = input("Enter your answer here:\n")
 
@@ -157,10 +157,32 @@ class Admin:
             for expense in expenses:
                 if expense[0] == date:
                     num_sheet = expense[1]
+                    # Tranform the last "," symbol in "."
+                    # So Python can tranform the string into a float number
                     num = num_sheet.replace(",", ".")
                     total += float(num)
 
             return [total, True]
+
+
+def validate_expense_value():
+    '''
+    Validate the expanses value.
+    Check if can be transformed in a float number
+    '''
+    value = input("Enter your answer here:\n")
+
+    while True:
+        try:
+            float(value)
+            valid_value = float(value)
+            break
+        except ValueError:
+            print('Invalid value, please use "." symbol')
+            print("Examples: 1100, 10.50, 2537.72")
+            value = input("Enter your answer here:\n")
+
+    return valid_value
 
 
 def login_or_register():
