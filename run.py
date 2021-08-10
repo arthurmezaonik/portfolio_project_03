@@ -38,6 +38,55 @@ class Customer:
         """
         return f'{self.f_name} {self.l_name}'
 
+    def total(self):
+        """
+        Calculate the total for the customer order
+        """
+        order = self.balance
+        total_order = 0
+        today = date.today().strftime("%d-%m-%Y")
+
+        for item in order:
+            # Item value x item quantity
+            item_total = item[1] * item[2]
+
+            total_order += item_total
+            total_order = round(total_order, 2)
+
+        return [today, total_order]
+
+    def invoice(self):
+        """
+        Print the customer invoice
+        """
+        today = date.today().strftime("%d-%m-%Y")
+        order = self.balance
+        total = self.total()[1]
+
+        print("Here it's your invoice:")
+        print(" ")
+        sleep(2)
+
+        print("$" * 50)
+        print(f'{today:>50}')
+        print(" ")
+        print(" "*18 + "CODER'S BISTRO" + " "*18)
+        print(" ")
+        print(f'Order for: {self.full_name()}')
+        print(f"Customer email: {self.email}")
+        print(" ")
+        print("-" * 50)
+        print(" ")
+
+        for item in order:
+            print(f'{item[0]:<25} Quantity: {item[2]} {item[1]:>10}')
+
+        print(" ")
+        print("="*50)
+        print('TOTAL' + ' '*38 + f'${total}')
+        print("$" * 50)
+        print(" ")
+
 
 class Admin:
     """
@@ -326,7 +375,6 @@ def customer_function(data):
         value = item_value(item_row, menu_sheet)
         quantity = item_quantity()
         order = [plate, value, quantity]
-        print(order)
         print("Noted!\n")
 
         add_balance(customer, order)
@@ -553,7 +601,7 @@ def customer_farewell_message(customer):
     If balance > 0, add the sale on the sales worksheet
     '''
     # Generate the final order
-    total_order = total(customer)
+    total_order = customer.total()
     order_value = total_order[1]
 
     if order_value == 0:
@@ -561,6 +609,7 @@ def customer_farewell_message(customer):
     elif order_value > 0:
         # Add order on the sales worksheet
         update_worksheet(total_order, "sales")
+        customer.invoice()
         return 'Thanks for eating with us!'
     else:
         return 'Error message: farewell function.'
@@ -756,7 +805,7 @@ def end_section():
     Print a # line to end the sections
     '''
     print(" ")
-    print("# "*15)
+    print("# "*25)
     print(" ")
 
 
