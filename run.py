@@ -31,7 +31,7 @@ class Customer:
         """
         Return the clients full info
         """
-        return (f'Client: {self.full_name()}. Email: {self.email}. Balance: {self.balance}')
+        return (f'Client: {self.full_name()}. Email: {self.email}. Balance: {self.balance}')  # noqa
 
     def full_name(self):
         """
@@ -97,12 +97,6 @@ class Admin:
         # Instance attributes
         self.email = email
         self.password = password
-
-    def info(self):
-        """
-        Return admin info
-        """
-        return f'Email: {self.email} Password: {self.password}'
 
     def check_sales(self, date):
         """
@@ -172,6 +166,8 @@ def validate_expense_value():
     '''
     value = input("Enter your answer here:\n")
 
+    end_section()
+
     while True:
         try:
             float(value)
@@ -181,6 +177,8 @@ def validate_expense_value():
             print('Invalid value, please use "." symbol')
             print("Examples: 1100, 10.50, 2537.72")
             value = input("Enter your answer here:\n")
+
+            end_section()
 
     return valid_value
 
@@ -199,6 +197,8 @@ def login_or_register():
     while answer not in ("1", "2"):
         print("Please choose between one of the options.")
         answer = input("Enter your answer here:\n").strip()
+
+        end_section()
 
     return answer
 
@@ -435,14 +435,14 @@ def new_customer_data():
     while True:
         email = input("What's your email?\n").strip()
 
+        end_section()
+
         if email not in email_column:
-            if validate_email(email):
+            if valid_email(email):
                 break
         else:
             print("Sorry, this email is already in use")
             print("Can we try again?\n")
-
-    end_section()
 
     return [f_name, l_name, email]
 
@@ -688,11 +688,13 @@ def admin_options():
     print("D - Check your Total")
     option = input("Enter your answer here:\n").strip().upper()
 
+    end_section()
+
     while option not in ("A", "B", "C", "D"):
         print("Choose between one of the options.")
         option = input("Enter your answer here:\n").strip().upper()
 
-    end_section()
+        end_section()
 
     return option
 
@@ -743,6 +745,8 @@ def collect_date():
     print("Ex: July 30th, 2021 would be 30-07-2021")
     date = input("Enter your answer here:\n").strip()
 
+    end_section()
+
     return date
 
 
@@ -754,11 +758,11 @@ def print_expenses(date):
     expenses = worksheet.get_all_values()
 
     header = expenses[0]
-    print(f'{header[0]:<15}{header[1]:<10}{header[2]:<20}')
+    print(f'{header[0]:<15}{header[1]:<15}{header[2]:<20}')
 
     for expense in expenses:
         if expense[0] == date:
-            print(f'{expense[0]:<15}${expense[1]:<9}{expense[2]:<20}')
+            print(f'{expense[0]:<15}${expense[1]:<14}{expense[2]:<20}')
     print("")
 
 
@@ -777,7 +781,7 @@ def day_balance(adm):
 
     total = sales - expenses
 
-    return f'In {date} you sold ${sales} and spent ${expenses}. Your total is ${total}.'
+    return f'In {date} you sold ${sales} and spent ${expenses}. Your total is ${total}.'  # noqa
 
 
 def working():
@@ -807,6 +811,7 @@ def validade_date(date):
 
     except ValueError:
         print("Incorrect date format. It should be DD-MM-YYYY.")
+
         return False
 
 
@@ -819,7 +824,7 @@ def validate_yes_no(answer):
             raise ValueError('Choose between Y or N')
 
     except ValueError as e:
-        print(f"Invalid data: {e}, please try again.\n")
+        print(f"Invalid data: {e}, please try again.")
         return False
 
     return True
