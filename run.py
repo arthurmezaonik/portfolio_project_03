@@ -429,22 +429,53 @@ def new_customer_data():
     client_sheet = select_worksheet('clients')
     email_column = client_sheet.col_values(3)
 
-    f_name = input("What's your first name?\n").capitalize().strip()
-    l_name = input("What's your last name?\n").capitalize().strip()
+    print("What's your first name?")
+    f_name = collect_name()
+    print("What's your last name?")
+    l_name = collect_name()
+    print("What's your email?")
 
     while True:
-        email = input("What's your email?\n").strip()
-
-        end_section()
+        email = collect_email()
 
         if email not in email_column:
-            if valid_email(email):
                 break
         else:
             print("Sorry, this email is already in use")
             print("Can we try again?\n")
 
     return [f_name, l_name, email]
+
+
+def collect_name():
+    '''
+    Collect the user first and last name
+    '''
+    while True:
+        name = input("Enter your answear here:\n").capitalize().strip()
+
+        end_section()
+
+        if valid_name(name):
+            break
+    
+    return name
+
+
+def valid_name(name):
+    '''
+    Validate if the name is at least 1 char long    
+    '''
+    try:
+        if len(name) < 1:
+            raise ValueError ("Your name needs to be at least one char long.")
+
+    except ValueError as e:
+        print(f"Incorrect input: {e} Please try again.")
+
+        return False
+    
+    return True
 
 
 def find_row(item, sheet):
