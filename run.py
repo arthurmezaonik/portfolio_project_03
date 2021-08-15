@@ -4,6 +4,7 @@ from email_validator import validate_email, EmailNotValidError
 from datetime import date, datetime
 from time import sleep
 
+# Scope and fixed variables defined as love_sandwiches walkthrough project by Code Institute
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
@@ -229,36 +230,31 @@ def log_in():
     print("I just need to check your email.")
     print("Can you write it for me?")
 
-    user_email = collect_email()
-    email_admin = is_admin(user_email)
-    email_customer = is_customer(user_email)
-    # If it is a admin email
-    if email_admin:
-        admin_function(user_email)
-
-    # If it is a customer email
-    elif email_customer:
-        data = customer_info(user_email)
-        customer = create_customer(data)
-        customer_function(customer)
-
-    else:
-        print("Sorry, I couldn't find your email")
-        answer = email_not_found()
-        try_again_register(answer)
-
-
-def try_again_register(option):
-    """
-    Based on the answer, 
-    Try to collect the email or create a new account
-    """
-    # Try again
-    if option == "1":
-        print("Can you write your email again?")
-    # Register
-    elif option == "2":
-        create_account()
+    while True:
+        user_email = collect_email()
+        admin = is_admin(user_email)
+        customer = is_customer(user_email)
+        # If it is a admin email
+        if admin:
+            admin_function(user_email)
+            break
+        # If it is a customer email
+        elif customer:
+            info = customer_info(user_email)
+            customer = create_customer(info)
+            customer_function(customer)
+            break
+        else:
+            print("Sorry, I couldn't find your email")
+            answer = email_not_found()
+            # Try again
+            if answer == "1":
+                print("Can you write your email again?")
+                pass
+            # Register
+            elif answer == "2":
+                create_account()
+                break
 
 
 def collect_email():
@@ -383,41 +379,6 @@ def is_customer(email):
         return True
     else:
         return False
-
-
-def customer_function(customer):
-    """
-    Code used when the user is a customer
-    """
-    print("All done!")
-    print(f'Welcome {customer.customer_full_name()}')
-
-    # While loop to print the menu on the screen and collect the customer order
-    # Item's value added to the customer order
-    print("Would you like to check our menu? (Y / N)")
-    while ordering():
-        # Display menu
-        menu_option = menu_options()
-        menu_worksheet = select_worksheet(menu_option)
-        display_menu(menu_worksheet)
-
-        # Select item
-        item_id = customer_order(menu_worksheet)
-        item_row = find_row(item_id, menu_worksheet)
-
-        # From ID and row get item informations
-        plate = item_name(item_row, menu_worksheet)
-        value = item_value(item_row, menu_worksheet)
-        quantity = item_quantity()
-        item = [plate, value, quantity]
-        print("Noted!\n")
-
-        add_order(customer, item)
-        print("Anything else? (Y / N)")
-
-    # Farewell message
-    farewell_message = customer_farewell_message(customer)
-    print(farewell_message)
 
 
 def customer_info(email):
@@ -615,6 +576,41 @@ def total(customer):
     return [today, total_order]
 
 
+def customer_function(customer):
+    """
+    Code used when the user is a customer
+    """
+    print("All done!")
+    print(f'Welcome {customer.customer_full_name()}')
+
+    # While loop to print the menu on the screen and collect the customer order
+    # Item's value added to the customer order
+    print("Would you like to check our menu? (Y / N)")
+    while ordering():
+        # Display menu
+        menu_option = menu_options()
+        menu_worksheet = select_worksheet(menu_option)
+        display_menu(menu_worksheet)
+
+        # Select item
+        item_id = customer_order(menu_worksheet)
+        item_row = find_row(item_id, menu_worksheet)
+
+        # From ID and row get item informations
+        plate = item_name(item_row, menu_worksheet)
+        value = item_value(item_row, menu_worksheet)
+        quantity = item_quantity()
+        item = [plate, value, quantity]
+        print("Noted!\n")
+
+        add_order(customer, item)
+        print("Anything else? (Y / N)")
+
+    # Farewell message
+    farewell_message = customer_farewell_message(customer)
+    print(farewell_message)
+
+
 def customer_farewell_message(customer):
     '''
     Displays a fareweel message depending on the final balance
@@ -645,25 +641,6 @@ def is_admin(email):
         return True
     else:
         return False
-
-
-def admin_function(email):
-    """
-    Code used when the user is a admin
-    """
-    # Create a Admin
-    admin_email = email
-    admin_password = collect_admin_password()
-    admin = Admin(admin_email, admin_password)
-
-    print("Logged in as ADMIN\n")
-    print("Do you want to check your options?(Y / N)")
-    while working():
-        option = admin_options()
-        admin_functions(admin, option)
-        print("Do you want to check anything else?(Y / N)")
-
-    print("System ended.")
 
 
 def collect_admin_password():
@@ -753,7 +730,7 @@ def collect_date():
     while not validate_date(date):
         date = input("Enter your answer here:\n").strip()
 
-    end_section()
+        end_section()
 
     return date
 
@@ -806,6 +783,25 @@ def working():
         return True
     elif answer == "N":
         return False
+
+
+def admin_function(email):
+    """
+    Code used when the user is a admin
+    """
+    # Create a Admin
+    admin_email = email
+    admin_password = collect_admin_password()
+    admin = Admin(admin_email, admin_password)
+
+    print("Logged in as ADMIN\n")
+    print("Do you want to check your options?(Y / N)")
+    while working():
+        option = admin_options()
+        admin_functions(admin, option)
+        print("Do you want to check anything else?(Y / N)")
+
+    print("System ended.")
 
 
 #VALIDATIONS
