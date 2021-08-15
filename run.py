@@ -4,7 +4,8 @@ from email_validator import validate_email, EmailNotValidError
 from datetime import date, datetime
 from time import sleep
 
-# Scope and fixed variables defined as love_sandwiches walkthrough project by Code Institute
+# Scope and fixed variables defined as love_sandwiches walk through project
+# by Code Institute
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
@@ -18,7 +19,7 @@ SHEET = GSPREAD_CLIENT.open('coders_bistro')
 
 
 class Customer:
-    '''
+    """
     A class used to represent a Customer
 
     ...
@@ -33,14 +34,14 @@ class Customer:
         the customer's email
     order = list
         nested list with customer's order [name, value, quantity]
-    
+
     Methods
     --------
     customer_full_name
         Return the customer full name
     customer_total
-        Calculate and return the total from the order based on the order list    
-    '''
+        Calculate and return the total from the order based on the order list
+    """
     def __init__(self, first_name, last_name, email):
         """
         Instance attributes
@@ -81,7 +82,7 @@ class Customer:
         order = self.order
         total = self.customer_total()[1]
 
-        print("Here it's your invoice:")
+        print("Here's your invoice:")
         print(" ")
         sleep(2)
 
@@ -107,7 +108,7 @@ class Customer:
 
 
 class Admin:
-    '''
+    """
     A class used to represent a Admin
 
     ...
@@ -118,16 +119,17 @@ class Admin:
         the admin's email
     password = str
         the admin's password
-    
+
     Methods
     --------
     check_sales
         Return the sale's total from the chosen day
     new_expense
-        Collect value and description for a new expense and add to the expeses' worksheet
+        Collect value and description for a new expense,
+        and add to the expenses' worksheet
     check_expenses
-        Return the expenses' total from the chosen day  
-    '''
+        Return the expenses' total from the chosen day
+    """
     def __init__(self, email, password):
         """
         Instance attributes
@@ -152,7 +154,8 @@ class Admin:
             for sale in sales:
                 if sale[0] == date:
                     str_value = sale[1]
-                    # Replace "," for "." so the string can be transformed in a float number
+                    # Replace "," for "."
+                    # so the string can be transformed in a float number
                     real_value = str_value.replace(",", ".")
                     total += float(real_value)
 
@@ -160,11 +163,11 @@ class Admin:
 
     def new_expense(self):
         """
-        Collect a new expense's value and description
+        Collect a new expenses' value and description
         Register the new expense on the expenses's worksheet
         """
         today = date.today().strftime("%d-%m-%Y")
-        print("How much is the expnase?")
+        print("How much is the expense?")
         print("Example: 15.50")
         value = validate_expense_value()
         print("Give a small description for your expense")
@@ -192,7 +195,8 @@ class Admin:
             for expense in expenses:
                 if expense[0] == date:
                     str_value = expense[1]
-                    # Replace "," for "." so the string can be transformed in a float number
+                    # Replace "," for "."
+                    # so the string can be transformed in a float number
                     real_value = str_value.replace(",", ".")
                     total += float(real_value)
 
@@ -277,19 +281,19 @@ def select_worksheet(option):
     Based on the option, return the right worksheet
     """
     worksheet_dict = {
-        "A" : 'food_menu',
-        "B" : 'drink_menu',
-        "C" : "deserts_menu",
-        "ADMIN" : 'admin',
-        "SALES" : 'sales',
-        "EXPENSES" : 'expenses',
-        'CLIENTS' : 'clients'
+        "A": 'food_menu',
+        "B": 'drink_menu',
+        "C": "deserts_menu",
+        "ADMIN": 'admin',
+        "SALES": 'sales',
+        "EXPENSES": 'expenses',
+        'CLIENTS': 'clients'
     }
 
     worksheet = ""
-    
+
     for key, value in worksheet_dict.items():
-        if option.upper() ==  key:
+        if option.upper() == key:
             worksheet = SHEET.worksheet(value)
 
     return worksheet
@@ -300,7 +304,8 @@ def update_worksheet(data, worksheet):
     Receives a list to be inserted into a worksheet
     Update the relevant worksheet with the data provided
     """
-    # Same function as used on the love_sandwiches walkthrough project by Code Institute
+    # Same function as used on the love_sandwiches walk through project
+    # by Code Institute
     worksheet_to_update = select_worksheet(worksheet)
     worksheet_to_update.append_row(data)
 
@@ -315,9 +320,9 @@ def find_row(item, worksheet):
 
 
 def end_section():
-    '''
+    """
     Print a # line to end the sections
-    '''
+    """
     print(" ")
     print("# "*25)
     print(" ")
@@ -335,7 +340,7 @@ def create_account():
 def register():
     """
     Register the user as a new customer.
-    Return a Customer.    
+    Return a Customer.
     """
     print("Let's make a customer account for you!")
     print("I need some basic info.\n")
@@ -396,9 +401,9 @@ def customer_info(email):
 
 def new_customer_info():
     """
-    Colect the customer info (first name, last name and email),
+    Collect the customer info (first name, last name and email),
     And check if its not already registered.
-    Return a lsit with the new customer info
+    Return a list with the new customer info
     """
     client_worksheet = select_worksheet('clients')
     email_column = client_worksheet.col_values(3)
@@ -414,7 +419,7 @@ def new_customer_info():
 
         # Check if email is already registered
         if email not in email_column:
-                break
+            break
         else:
             print("Sorry, this email is already in use")
             print("Can we try again?\n")
@@ -423,9 +428,9 @@ def new_customer_info():
 
 
 def collect_name():
-    '''
+    """
     Collect the user first and last name
-    '''
+    """
     while True:
         name = input("Enter your answer here:\n").capitalize().strip()
 
@@ -433,7 +438,7 @@ def collect_name():
 
         if validate_name(name):
             break
-    
+
     return name
 
 
@@ -456,8 +461,8 @@ def menu_options():
     menu_option = input("Enter your answer here:\n").upper().strip()
 
     end_section()
-    
-    #Validate if the answer is A, B or C
+
+    # Validate if the answer is A, B or C
     while menu_option not in ("A", "B", "C"):
         print("Please choose one of the options:")
         print("A - Foods menu")
@@ -482,7 +487,7 @@ def display_menu(worksheet):
 
 def customer_order(worksheet):
     """
-    Collect the ID from the item that the customer wnats
+    Collect the ID from the item that the customer wants
     Return the ID
     """
     while True:
@@ -596,7 +601,7 @@ def customer_function(customer):
         item_id = customer_order(menu_worksheet)
         item_row = find_row(item_id, menu_worksheet)
 
-        # From ID and row get item informations
+        # From ID and row get item information
         plate = item_name(item_row, menu_worksheet)
         value = item_value(item_row, menu_worksheet)
         quantity = item_quantity()
@@ -612,10 +617,10 @@ def customer_function(customer):
 
 
 def customer_farewell_message(customer):
-    '''
-    Displays a fareweel message depending on the final balance
+    """
+    Displays a farewell message depending on the final balance
     If balance > 0, add the sale on the sales worksheet
-    '''
+    """
     # Generate the final order
     total_order = customer.customer_total()
     order_value = total_order[1]
@@ -629,7 +634,7 @@ def customer_farewell_message(customer):
         return 'Thanks for eating with us!'
 
 
-#ADMIN FUNCTIONS
+# ADMIN FUNCTIONS
 def is_admin(email):
     """
     Check if email is from a admin account
@@ -718,9 +723,9 @@ def admin_functions(adm, option):
 
 
 def collect_date():
-    '''
+    """
     Collect a date to be checked
-    '''
+    """
     print("Which day do you want to check?")
     print("Ex: July 30th, 2021 would be 30-07-2021")
     date = input("Enter your answer here:\n").strip()
@@ -804,12 +809,12 @@ def admin_function(email):
     print("System ended.")
 
 
-#VALIDATIONS
+# VALIDATIONS
 def validate_expense_value():
-    '''
+    """
     Validate the expanses value.
     Check if can be transformed in a float number
-    '''
+    """
     value = input("Enter your answer here:\n")
 
     end_section()
@@ -846,18 +851,18 @@ def user_validate_email(email):
 
 
 def validate_name(name):
-    '''
+    """
     Validate customer name
-    Check if the name is at least 1 char long    
-    '''
+    Check if the name is at least 1 char long
+    """
     try:
         if len(name) < 1:
-            raise ValueError ("Your name needs to be at least one char long.")
+            raise ValueError("Your name needs to be at least one char long.")
 
     except ValueError as e:
         print(f"Incorrect input: {e} Please try again.")
         return False
-    
+
     return True
 
 
@@ -892,10 +897,10 @@ def validate_item_quantity(quantity):
 
 
 def validate_date(date):
-    '''
+    """
     Validate date
     Check if the date is in the right format DD-MM-YYYY
-    '''
+    """
     date_str = date
 
     try:
@@ -936,7 +941,7 @@ def main():
     # Login or register
     user_option = login_or_register()
 
-    # Run the system based on the otpion
+    # Run the system based on the option
     # Log in option
     if user_option == "1":
         log_in()
@@ -944,5 +949,6 @@ def main():
     # Register option
     elif user_option == "2":
         create_account()
+
 
 main()
