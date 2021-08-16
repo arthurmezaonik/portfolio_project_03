@@ -176,7 +176,7 @@ If you choose to check your sales, expenses, or total, the app is going to reque
 
     ![Admin email and password](assets/images/readme/admin_email_password_check.PNG)
 
-    - If the user enter the admin’s email (admin@codersbistro.com) the app will request the admin’s password.
+    - If the user enter the admin’s email (admin@codersbistro.com) the app will request the admin’s password (1234#).
 
 * Admin’s options
 
