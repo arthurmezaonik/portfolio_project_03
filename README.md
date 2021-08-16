@@ -76,9 +76,13 @@ After that, you will be able to choose between three different menus, and then t
 
 When that is done and you don’t want to order anything else, an invoice will be displayed and the system is going to end.
 
-[Customer function vídeo](assets/gif/customer.gif)
+* Customer function vídeo
 
-[Create account vídeo](assets/gif/customer_create_account.gif)
+    ![Customer function vídeo](assets/gif/customer.gif)
+
+* Create account vídeo
+
+    ![Create account vídeo](assets/gif/customer_create_account.gif)
 
 *__Admin:__*
 
@@ -88,13 +92,19 @@ The admin has four options, check sales, update and check expenses and check the
 
 If you choose to check your sales, expenses, or total, the app is going to request the date that you want to check, collect the data from the worksheet and display back to you. If you choose to update expenses, you’ll need to pass the value of the new expense and a brief description, and then the app is going to pass these values into the worksheet.
 
-[Admin function vídeo](assets/gif/admin.gif)
+* Admin function vídeo
+
+    ![Admin function vídeo](assets/gif/admin.gif)
 
 *__Worksheet interation__*
 
-[Customer with worksheet vídeo](assets/gif/customer_with_worksheet.gif)
+* Customer with worksheet vídeo
 
-[Admin with worksheet vídeo](assets/gif/admin_with_worksheet.gif)
+    ![Customer with worksheet vídeo](assets/gif/customer_with_worksheet.gif)
+
+* Admin with worksheet vídeo
+
+    ![Admin with worksheet vídeo](assets/gif/admin_with_worksheet.gif)
 
 ## Features
 
@@ -182,11 +192,17 @@ If you choose to check your sales, expenses, or total, the app is going to reque
 
         - And then collect the data from the worksheet and displays on the screen
 
-        [Option A](assets/images/readme/option_a.PNG)
+        __Option A image__
 
-        [Option C](assets/images/readme/option_c.PNG)
+        ![Option A](assets/images/readme/option_a.PNG)
 
-        [Option D](assets/images/readme/option_d.PNG)
+        __Option C image__
+
+        ![Option C](assets/images/readme/option_c.PNG)
+
+        __Option D image__
+
+        ![Option D](assets/images/readme/option_d.PNG)
 
 
     - Option B
@@ -197,23 +213,31 @@ If you choose to check your sales, expenses, or total, the app is going to reque
 
         - Then the app requests a brief description about the expense
 
-        - To finish, the app sends the collected data for the expense’s worksheet 
+        - To finish, the app sends the collected data for the expense’s worksheet
 
-        [Option B](assets/images/readme/option_b.PNG)
+        __Option B image__
+
+        ![Option B](assets/images/readme/option_b.PNG)
 
 #### Invalid input messages
 
 * The app displays some different messages for different invalid inputs.
 
-    - Examples:
+    - Invalid Email
+        
+        ![Invalid email](assets/images/readme/returned_message_invalid_email.PNG)
 
-        - [Invalid email](assets/images/readme/returned_message_invalid_email.PNG)
+    - Email not found
 
-        - [Not found email](assets/images/readme/not_found_email.PNG)
+        ![Not found email](assets/images/readme/not_found_email.PNG)
 
-        - [Incorrect date format](assets/images/readme/incorrect_date_format.PNG)
+    - Incorrect date format
+        
+        ![Incorrect date format](assets/images/readme/incorrect_date_format.PNG)
 
-        - [Incorrect value format](assets/images/readme/incorrect_expense_format.PNG)
+    - Incorrect value format
+        
+        ![Incorrect value format](assets/images/readme/incorrect_expense_format.PNG)
 
 ### Future Features
 
@@ -223,7 +247,9 @@ If you choose to check your sales, expenses, or total, the app is going to reque
 
 ## Design Documents
 
-[Flow Chart Document](assets/images/readme/flowchart.PNG)
+* Flowchart
+
+    [![flowchart](assets/images/readme/flowchart.PNG "FlowChart")](assets/images/readme/flowchart.PNG)
 
 ## Data Model
 
@@ -326,6 +352,10 @@ This application will be deployed via [Heroku](https://heroku.com)
 1.	Navigate to "Settings" and scroll down to "config vars".
 
     - That’s where you would store sensitive data that needs to kept secret. On my case my file creds.json to access the Google Sheet.
+
+    - creds.json example:
+
+        ![creds.json](assets/images/readme/creds.PNG)
 
 2. Click "Reveal Config Var", in the field key I entered the CREDS word and in the value field I copied my creds.json content as past there.
 
